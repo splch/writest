@@ -1,6 +1,7 @@
 async function getText(wait) {
     let hostCodes = {
         "docs.google.com": [document.getElementsByClassName("kix-appview-editor")[0], true],
+        // https://docs.google.com/document/export?format=txt&id=
         // "personalmicrosoftsoftware-my.sharepoint.com": [document.getElementById("WACViewPanel"), false],
         "writer.zoho.com": [document.getElementById("ui-editor-outer-div"), true],
         "www.icloud.com": [document.getElementsByClassName("atv4 iwork sc-view iw-canvas-container-view focus sc-regular-size")[0], false],
@@ -150,6 +151,9 @@ function displayArray(array, table) {
         let count = row.insertCell(1);
         word.innerText = a[0];
         count.innerText = a[1];
+        if (stopWords.includes(a[0].toLowerCase())) {
+            row.style.background = "lightgray";
+        }
     });
 }
 

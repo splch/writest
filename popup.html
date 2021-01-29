@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        html {
+            width: 300px;
+            min-height: 313px;
+        }
+
+        div {
+            text-align: center;
+        }
+
+        textarea {
+            height: 129px;
+            width: 278px;
+            overflow: auto;
+        }
+
+        summary,
+        small {
+            outline: none;
+            user-select: none;
+        }
+
+        table,
+        td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <button id="analyze">Analyze</button>
+    </div>
+
+    <hr>
+
+    <details>
+        <summary>Text</summary>
+        <textarea id="text"></textarea>
+    </details>
+
+    <hr>
+
+    <details open>
+        <summary>Statistics</summary>
+        <table id="stats">
+            <tr>
+                <th>Counts</th>
+                <th>Number</th>
+            </tr>
+            <tr>
+                <td>Characters</td>
+                <td id="charNum"></td>
+            </tr>
+            <tr>
+                <td>Words</td>
+                <td id="wordNum"></td>
+            </tr>
+            <tr>
+                <td>Sentences</td>
+                <td id="sentNum"></td>
+            </tr>
+            <tr>
+                <td>Average words per sentence</td>
+                <td id="avgWord"></td>
+            </tr>
+            <tr>
+                <td>Average characters per word</td>
+                <td id="avgChar"></td>
+            </tr>
+            <tr>
+                <th>Derived</th>
+                <th>Number</th>
+            </tr>
+            <tr>
+                <td>Automated Readability</td>
+                <td id="autoRead"></td>
+            </tr>
+            <tr>
+                <td>Lexical Density</td>
+                <td id="lexDen"></td>
+            </tr>
+        </table>
+    </details>
+
+    <hr>
+
+    <details>
+        <summary>Additional features</summary>
+
+        <small>Scroll timeout (ms): </small>
+        <input id="wait" type="number" placeholder="Scroll Timeout" size="4" min="0" value="25">
+
+        <br>
+
+        <small>Ngram search: </small>
+        <input id="ngram" type="search" data-tip="Same as Ngram search">
+        <input id="ngramSearch" type="button" value="&#x1F50D;">
+        <table id="ngramTable" hidden>
+            <tr>
+                <th>Word</th>
+                <th>Use</th>
+            </tr>
+        </table>
+
+        <hr>
+
+        <small>Phrase length: </small>
+        <input id="phraseSize" type="number" min="1" value="1">
+        <details id="phraseTable">
+            <summary>Frequency</summary>
+            <table id="frequency">
+                <tr>
+                    <th>Phrase</th>
+                    <th>Count</th>
+                </tr>
+            </table>
+        </details>
+
+        <hr>
+
+        <small>Search window: </small>
+        <input id="windowSize" type="number" min="1" value="3">
+        <details id="windowTable">
+            <summary>Repetition</summary>
+            <table id="window">
+                <tr>
+                    <th>Word</th>
+                    <th>Count</th>
+                </tr>
+            </table>
+        </details>
+    </details>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

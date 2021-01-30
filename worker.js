@@ -39,5 +39,5 @@ self.addEventListener("message", function (e) {
     items.sort(function (first, second) {
         return second[1] - first[1];
     });
-    self.postMessage(items);
+    self.postMessage([items, size]);
 }, false);

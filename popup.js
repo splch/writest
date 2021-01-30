@@ -71,7 +71,7 @@ async function searchGram(list) {
     xhr.send();
 }
 
-function displayArray(array, table) {
+async function displayArray(array, table) {
     while (table.rows.length > 1) {
         table.deleteRow(1);
     }
@@ -81,20 +81,20 @@ function displayArray(array, table) {
         let count = row.insertCell(1);
         word.innerText = a[0];
         count.innerText = a[1];
-        if (stopWords.includes(a[0].toLowerCase())) {
+        if (stopWords.includes(a[0])) {
             row.style.background = "lightgray";
         }
     });
 }
 
 async function displayStats(text, words) {
-    let sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
+    const sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
+    const wordsNum = words.length;
     let charNum = 0;
     let lexNum = 0;
-    let wordsNum = words.length;
     for (let i = 0; i < wordsNum; i++) {
         charNum += words[i].length;
-        lexNum += stopWords.includes(words[i].toLowerCase()) ? 0 : 1;
+        lexNum += stopWords.includes(words[i]) ? 0 : 1;
     }
 
     document.getElementById("charNum").innerText = charNum.toLocaleString("en-US");
@@ -117,8 +117,7 @@ async function displayStats(text, words) {
 
 async function populate(text) {
     words = text.toLowerCase().split(/\P{L}+/u);
-    let wordsNum = words.length;
-    for (let i = 0; i < wordsNum; i++) {
+    for (let i = 0; i < words.length; i++) {
         if (["s", "t", "d", "m", "ve", "ll", "re", "ch", ""].includes(words[i])) {
             words.splice(i, 1);
             i--;
@@ -130,12 +129,16 @@ async function populate(text) {
 
     let phraser = new Worker(chrome.runtime.getURL("worker.js"));
     phraser.addEventListener("message", function (e) {
-        displayArray(e.data, document.getElementById("frequency"));
+        if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
+            displayArray(e.data[0], document.getElementById("frequency"));
+        }
     });
 
     let windower = new Worker(chrome.runtime.getURL("worker.js"));
     windower.addEventListener("message", function (e) {
-        displayArray(e.data, document.getElementById("window"));
+        if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
+            displayArray(e.data[0], document.getElementById("window"));
+        }
     }, false);
 
     phraser.postMessage(JSON.stringify(
@@ -180,7 +183,9 @@ document.getElementById("ngramSearch").addEventListener("click", () => {
 document.getElementById("phraseSize").addEventListener("change", () => {
     let phraser = new Worker(chrome.runtime.getURL("worker.js"));
     phraser.addEventListener("message", function (e) {
-        displayArray(e.data, document.getElementById("frequency"));
+        if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
+            displayArray(e.data[0], document.getElementById("frequency"));
+        }
     });
 
     phraser.postMessage(JSON.stringify(
@@ -191,7 +196,9 @@ document.getElementById("phraseSize").addEventListener("change", () => {
 document.getElementById("windowSize").addEventListener("change", () => {
     let windower = new Worker(chrome.runtime.getURL("worker.js"));
     windower.addEventListener("message", function (e) {
-        displayArray(e.data, document.getElementById("window"));
+        if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
+            displayArray(e.data[0], document.getElementById("window"));
+        }
     }, false);
 
     windower.postMessage(JSON.stringify(

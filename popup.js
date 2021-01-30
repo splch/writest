@@ -1,53 +1,35 @@
+let rsp;
 async function getText(wait) {
     let hostCodes = {
-        "docs.google.com": [document.getElementsByClassName("kix-appview-editor")[0], true],
-        // https://docs.google.com/document/export?format=txt&id=
-        // "personalmicrosoftsoftware-my.sharepoint.com": [document.getElementById("WACViewPanel"), false],
-        "writer.zoho.com": [document.getElementById("ui-editor-outer-div"), true],
-        "www.icloud.com": [document.getElementsByClassName("atv4 iwork sc-view iw-canvas-container-view focus sc-regular-size")[0], false],
-        // "paper.dropbox.com": [document.getElementById("padpage-container"), true],
+        "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
+
+        // "writer.zoho.com": [document.getElementById("ui-editor-outer-div"), true],
+        // https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
     };
 
-    let val = hostCodes[document.location.hostname];
-    if (val) {
-        let [element, scroll] = val;
-        if (scroll) {
-            function scrollTo(element) {
-                if (element) {
-                    if (element.scrollHeight - element.scrollTop > 1.5 * element.getBoundingClientRect().height) {
-                        element.scrollTop += element.getBoundingClientRect().height / 3;
-                        return 0;
-                    }
-                    else {
-                        return 1;
-                    }
-                }
-                else {
-                    return 1;
-                }
-            }
-
-            let initialScroll = element.scrollTop;
-            element.scrollTop = 0;
-
-            let intervalId = window.setInterval(
-                () => {
-                    if (scrollTo(element)) {
-                        chrome.runtime.sendMessage(
-                            element.innerText
-                        );
-                        clearInterval(intervalId);
-                        element.scrollTop = initialScroll;
-                    }
-                }, parseInt(wait));
+    let url = hostCodes[document.location.hostname];
+    if (url) {
+        if (document.location.hostname == "docs.google.com") {
+            url += document.location.href.split(/d\//)[1].split("/")[0];
         }
-        else {
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                chrome.runtime.sendMessage(
+                    xhr.responseText
+                );
+            }
+        };
+        xhr.timeout = 1e4;
+        xhr.ontimeout = function () {
             chrome.runtime.sendMessage(
-                element.innerText
+                "Copy your text in here, and press the Analyze Textarea button."
             );
         }
+        xhr.send();
     }
-
     else {
         chrome.runtime.sendMessage(
             document.body.innerText
@@ -61,18 +43,17 @@ async function searchGram(list) {
         query += list[i].replaceAll(" ", "+") + "%2C";
     }
 
-    let xmlhttp = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) + "&year_start=2018&year_end=2019&corpus=26&smoothing=0&case_insensitive=on";
-
-    xmlhttp.open("GET", url);
-    xmlhttp.send();
-    xmlhttp.onreadystatechange = function () {
+    
+    xhr.open("GET", url);
+    xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             let data = [];
-            let resp = JSON.parse(xmlhttp.responseText);
+            let resp = JSON.parse(xhr.responseText);
             for (i = 0; i < resp.length; i++) {
-                if (resp[i]["parent"] == "") {
-                    data.push([resp[i]["ngram"], resp[i]["timeseries"][resp[i]["timeseries"].length - 1]]);
+                if (resp[i].parent == "") {
+                    data.push([resp[i].ngram, resp[i].timeseries[resp[i].timeseries.length - 1]]);
                 }
             }
             data.sort(function (first, second) {
@@ -80,7 +61,7 @@ async function searchGram(list) {
             });
             for (i = 0; i < data.length; i++) {
                 data[i][1] = data[i][1].toLocaleString("en-US", {
-                    style: 'percent',
+                    style: "percent",
                     minimumFractionDigits: 10
                 });
             }
@@ -88,64 +69,14 @@ async function searchGram(list) {
             document.getElementById("ngramTable").removeAttribute("hidden");
         }
     };
-}
-
-function windowFreq(words, size) {
-    let freqMap = {};
-    for (let i = size; i < words.length; i += size) {
-        let windowMap = {};
-        for (let j = size; j > 0; j--) {
-            if (!windowMap[words[i - j]]) {
-                windowMap[words[i - j]] = 0;
-            }
-            windowMap[words[i - j]] += 1;
-        }
-        for (const [key, value] of Object.entries(windowMap)) {
-            if (value == 1) delete windowMap[key];
-            else {
-                if (!freqMap[key]) {
-                    freqMap[key] = 0;
-                }
-                freqMap[key] += 1;
-            }
-        }
-    }
-    let items = Object.keys(freqMap).map(function (key) {
-        return [key, freqMap[key]];
-    });
-    items.sort(function (first, second) {
-        return second[1] - first[1];
-    });
-    return items;
-}
-
-function phraseFreq(words, size) {
-    let freqMap = {};
-    for (let i = size; i < words.length; i++) {
-        let phrase = "";
-        for (let j = size; j > 0; j--) {
-            phrase += words[i - j] + " ";
-        }
-        phrase = phrase.slice(0, -1);
-        if (!freqMap[phrase]) {
-            freqMap[phrase] = 0;
-        }
-        freqMap[phrase] += 1;
-    }
-    let items = Object.keys(freqMap).map(function (key) {
-        return [key, freqMap[key]];
-    });
-    items.sort(function (first, second) {
-        return second[1] - first[1];
-    });
-    return items;
+    xhr.send();
 }
 
 function displayArray(array, table) {
     while (table.rows.length > 1) {
         table.deleteRow(1);
     }
-    array.forEach(function (a) {
+    array.slice(0, document.getElementById("limit").checked ? 500 : -1).forEach(function (a) {
         let row = table.insertRow(-1);
         let word = row.insertCell(0);
         let count = row.insertCell(1);
@@ -157,28 +88,28 @@ function displayArray(array, table) {
     });
 }
 
-function displayStats(text, words) {
+async function displayStats(text, words) {
     let sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
     let charNum = 0;
     let lexNum = 0;
-    for (let i = 0; i < words.length; i++) {
+    let wordsNum = words.length;
+    for (let i = 0; i < wordsNum; i++) {
         charNum += words[i].length;
         lexNum += stopWords.includes(words[i].toLowerCase()) ? 0 : 1;
     }
-    let wordsNum = words.length;
 
     document.getElementById("charNum").innerText = charNum.toLocaleString("en-US");
     document.getElementById("wordNum").innerText = wordsNum.toLocaleString("en-US");
     document.getElementById("sentNum").innerText = sentNum.toLocaleString("en-US");
-    document.getElementById("avgWord").innerText = Math.round(
-        10 * wordsNum / sentNum,
-    ) / 10;
-    document.getElementById("avgChar").innerText = Math.round(
-        10 * charNum / wordsNum
-    ) / 10;
+    document.getElementById("avgWord").innerText = (wordsNum / sentNum).toLocaleString("en-US", {
+        maximumFractionDigits: 1
+    });
+    document.getElementById("avgChar").innerText = (charNum / wordsNum).toLocaleString("en-US", {
+        maximumFractionDigits: 1
+    });
 
     document.getElementById("lexDen").innerText = (lexNum / wordsNum).toLocaleString("en-US", {
-        style: 'percent'
+        style: "percent"
     });
     document.getElementById("autoRead").innerText = Math.ceil(
         4.71 * (charNum / wordsNum) + 0.5 * (wordsNum / sentNum) - 21.43
@@ -186,27 +117,35 @@ function displayStats(text, words) {
 }
 
 async function populate(text) {
-    words = text.replaceAll(
-        /\P{L}+/gu, " "
-    ).split(" ");
-    for (let i = 0; i < words.length; i++) {
+    words = text.toLowerCase().split(/\P{L}+/u);
+    let wordsNum = words.length;
+    for (let i = 0; i < wordsNum; i++) {
         if (["s", "t", "d", "m", "ve", "ll", "re", "ch", ""].includes(words[i])) {
             words.splice(i, 1);
             i--;
         }
     }
 
-    document.getElementById("text").innerText = text;
-
+    document.getElementById("text").value = text;
     displayStats(text, words);
-    displayArray(phraseFreq(
-        words,
-        parseInt(document.getElementById("phraseSize").value)
-    ), document.getElementById("frequency"));
-    displayArray(windowFreq(
-        words,
-        parseInt(document.getElementById("windowSize").value)
-    ), document.getElementById("window"));
+
+    let phraser = new Worker(chrome.runtime.getURL("worker.js"));
+    phraser.addEventListener("message", function (e) {
+        displayArray(e.data, document.getElementById("frequency"));
+    });
+
+    let windower = new Worker(chrome.runtime.getURL("worker.js"));
+    windower.addEventListener("message", function (e) {
+        displayArray(e.data, document.getElementById("window"));
+    }, false);
+
+    phraser.postMessage(JSON.stringify(
+        [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
+    ));
+
+    windower.postMessage(JSON.stringify(
+        [words, parseInt(document.getElementById("windowSize").value), "window"]
+    ));
 }
 
 document.getElementById("analyze").addEventListener("click", () => {
@@ -221,6 +160,7 @@ document.getElementById("analyze").addEventListener("click", () => {
                     resolve(result);
                 });
             }).then(result => {
+                rsp = result;
                 populate(result);
             });
         });
@@ -230,22 +170,30 @@ document.getElementById("analyze").addEventListener("click", () => {
 document.getElementById("ngramSearch").addEventListener("click", () => {
     let data = document.getElementById("ngram").value;
     if (data) {
-        searchGram(data.split(/, | ,| , |,/));
+        searchGram(data.replaceAll(/,{2,}/g, ",").split(/, | ,| , |,/));
     }
 });
 
 document.getElementById("phraseSize").addEventListener("change", () => {
-    displayArray(phraseFreq(
-        words,
-        parseInt(document.getElementById("phraseSize").value)
-    ), document.getElementById("frequency"));
+    let phraser = new Worker(chrome.runtime.getURL("worker.js"));
+    phraser.addEventListener("message", function (e) {
+        displayArray(e.data, document.getElementById("frequency"));
+    });
+
+    phraser.postMessage(JSON.stringify(
+        [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
+    ));
 });
 
 document.getElementById("windowSize").addEventListener("change", () => {
-    displayArray(windowFreq(
-        words,
-        parseInt(document.getElementById("windowSize").value)
-    ), document.getElementById("window"));
+    let windower = new Worker(chrome.runtime.getURL("worker.js"));
+    windower.addEventListener("message", function (e) {
+        displayArray(e.data, document.getElementById("window"));
+    }, false);
+
+    windower.postMessage(JSON.stringify(
+        [words, parseInt(document.getElementById("windowSize").value), "window"]
+    ));
 });
 
 document.getElementById("text").addEventListener("change", () => {

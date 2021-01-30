@@ -13,7 +13,7 @@
         }
 
         textarea {
-            height: 129px;
+            height: 110px;
             width: 278px;
             overflow: auto;
         }
@@ -92,9 +92,14 @@
     <details>
         <summary>Additional features</summary>
 
+        <small>Limit table size: </small>
+        <input id="limit" type="checkbox" checked>
+
+        <br>
+
         <small>Scroll timeout (ms): </small>
         <input id="wait" type="number" placeholder="Scroll Timeout" size="4" min="0" value="25">
-
+        
         <br>
 
         <small>Ngram search: </small>
@@ -124,7 +129,7 @@
         <hr>
 
         <small>Search window: </small>
-        <input id="windowSize" type="number" min="1" value="3">
+        <input id="windowSize" type="number" min="2" value="3">
         <details id="windowTable">
             <summary>Repetition</summary>
             <table id="window">

@@ -102,16 +102,14 @@
         <br>
 
         <small>Ngram search: </small>
-        <input id="ngram" type="search" data-tip="Same as Ngram search">
+        <input id="ngramQuery" type="search" data-tip="Same as Ngram search">
         <input id="ngramSearch" type="button" value="&#x1F50D;">
         <table hidden>
             <thead>
                 <th>Word</th>
                 <th>Use</th>
             </thead>
-            <tbody id="ngramTable">
-
-            </tbody>
+            <tbody id="ngram"></tbody>
         </table>
 
         <hr>
@@ -125,9 +123,7 @@
                     <th>Phrase</th>
                     <th>Count</th>
                 </thead>
-                <tbody id="frequency">
-
-                </tbody>
+                <tbody id="frequency"></tbody>
             </table>
         </details>
 
@@ -142,9 +138,7 @@
                     <th>Word</th>
                     <th>Count</th>
                 </thead>
-                <tbody id="window">
-
-                </tbody>
+                <tbody id="window"></tbody>
             </table>
         </details>
     </details>

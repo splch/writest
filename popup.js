@@ -64,19 +64,19 @@ async function searchGram(list) {
                     minimumFractionDigits: 10
                 });
             }
-            displayArray(data, document.getElementById("ngramTable"));
-            document.getElementById("ngramTable").removeAttribute("hidden");
+            displayArray(data, document.getElementById("ngram"));
+            document.getElementById("ngram").removeAttribute("hidden");
         }
     };
     xhr.send();
 }
 
-async function displayArray(array, tbody) {
-    let newTbody = document.createElement("tbody");
-    newTbody.id = tbody.id;
-
+async function displayArray(array, table) {
+    while (table.rows.length) {
+        table.deleteRow(0);
+    }
     array.slice(0, document.getElementById("limit").checked ? 500 : -1).forEach(function (a) {
-        let row = newTbody.insertRow(-1);
+        let row = table.insertRow(-1);
         let word = row.insertCell(0);
         let count = row.insertCell(1);
         word.innerText = a[0];
@@ -85,8 +85,6 @@ async function displayArray(array, tbody) {
             row.style.background = "lightgray";
         }
     });
-
-    tbody.parentNode.replaceChild(newTbody, tbody);
 }
 
 async function displayStats(text, words) {
@@ -129,25 +127,26 @@ async function populate(text) {
     document.getElementById("text").value = text;
     displayStats(text, words);
 
-    let phraser = new Worker(chrome.runtime.getURL("worker.js"));
-    phraser.addEventListener("message", function (e) {
+    let phraseWorker = new Worker(chrome.runtime.getURL("worker.js"));
+    let windowWorker = new Worker(chrome.runtime.getURL("worker.js"));
+
+    phraseWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
             displayArray(e.data[0], document.getElementById("frequency"));
         }
     });
 
-    let windower = new Worker(chrome.runtime.getURL("worker.js"));
-    windower.addEventListener("message", function (e) {
+    windowWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
             displayArray(e.data[0], document.getElementById("window"));
         }
     }, false);
 
-    phraser.postMessage(JSON.stringify(
+    phraseWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
     ));
 
-    windower.postMessage(JSON.stringify(
+    windowWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("windowSize").value), "window"]
     ));
 }
@@ -176,34 +175,34 @@ document.getElementById("analyze").addEventListener("click", () => {
 });
 
 document.getElementById("ngramSearch").addEventListener("click", () => {
-    let data = document.getElementById("ngram").value;
+    let data = document.getElementById("ngramQuery").value;
     if (data) {
         searchGram(data.replaceAll(/,{2,}/g, ",").split(/, | ,| , |,/));
     }
 });
 
 document.getElementById("phraseSize").addEventListener("change", () => {
-    let phraser = new Worker(chrome.runtime.getURL("worker.js"));
-    phraser.addEventListener("message", function (e) {
+    let phraseWorker = new Worker(chrome.runtime.getURL("worker.js"));
+    phraseWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
             displayArray(e.data[0], document.getElementById("frequency"));
         }
     });
 
-    phraser.postMessage(JSON.stringify(
+    phraseWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
     ));
 });
 
 document.getElementById("windowSize").addEventListener("change", () => {
-    let windower = new Worker(chrome.runtime.getURL("worker.js"));
-    windower.addEventListener("message", function (e) {
+    let windowWorker = new Worker(chrome.runtime.getURL("worker.js"));
+    windowWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
             displayArray(e.data[0], document.getElementById("window"));
         }
     }, false);
 
-    windower.postMessage(JSON.stringify(
+    windowWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("windowSize").value), "window"]
     ));
 });

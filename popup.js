@@ -71,12 +71,12 @@ async function searchGram(list) {
     xhr.send();
 }
 
-async function displayArray(array, table) {
-    while (table.rows.length > 1) {
-        table.deleteRow(1);
-    }
+async function displayArray(array, tbody) {
+    let newTbody = document.createElement("tbody");
+    newTbody.id = tbody.id;
+
     array.slice(0, document.getElementById("limit").checked ? 500 : -1).forEach(function (a) {
-        let row = table.insertRow(-1);
+        let row = newTbody.insertRow(-1);
         let word = row.insertCell(0);
         let count = row.insertCell(1);
         word.innerText = a[0];
@@ -85,6 +85,8 @@ async function displayArray(array, table) {
             row.style.background = "lightgray";
         }
     });
+
+    tbody.parentNode.replaceChild(newTbody, tbody);
 }
 
 async function displayStats(text, words) {

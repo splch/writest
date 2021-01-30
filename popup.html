@@ -104,11 +104,14 @@
         <small>Ngram search: </small>
         <input id="ngram" type="search" data-tip="Same as Ngram search">
         <input id="ngramSearch" type="button" value="&#x1F50D;">
-        <table id="ngramTable" hidden>
-            <tr>
+        <table hidden>
+            <thead>
                 <th>Word</th>
                 <th>Use</th>
-            </tr>
+            </thead>
+            <tbody id="ngramTable">
+
+            </tbody>
         </table>
 
         <hr>
@@ -117,11 +120,14 @@
         <input id="phraseSize" type="number" min="1" value="1">
         <details id="phraseTable">
             <summary>Frequency</summary>
-            <table id="frequency">
-                <tr>
+            <table>
+                <thead>
                     <th>Phrase</th>
                     <th>Count</th>
-                </tr>
+                </thead>
+                <tbody id="frequency">
+
+                </tbody>
             </table>
         </details>
 
@@ -131,11 +137,14 @@
         <input id="windowSize" type="number" min="2" value="3">
         <details id="windowTable">
             <summary>Repetition</summary>
-            <table id="window">
-                <tr>
+            <table>
+                <thead>
                     <th>Word</th>
                     <th>Count</th>
-                </tr>
+                </thead>
+                <tbody id="window">
+
+                </tbody>
             </table>
         </details>
     </details>

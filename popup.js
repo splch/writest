@@ -1,5 +1,4 @@
-let rsp;
-async function getText(wait) {
+async function getText() {
     let hostCodes = {
         "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
 
@@ -45,7 +44,7 @@ async function searchGram(list) {
 
     let xhr = new XMLHttpRequest();
     let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) + "&year_start=2018&year_end=2019&corpus=26&smoothing=0&case_insensitive=on";
-    
+
     xhr.open("GET", url);
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -153,16 +152,20 @@ document.getElementById("analyze").addEventListener("click", () => {
         populate(document.getElementById("text").value);
     }
     else {
-        chrome.tabs.executeScript({ code: `(${getText})(${document.getElementById("wait").value})` }, () => {
-            new Promise(resolve => {
-                chrome.runtime.onMessage.addListener(function listener(result) {
-                    chrome.runtime.onMessage.removeListener(listener);
-                    resolve(result);
-                });
-            }).then(result => {
-                rsp = result;
-                populate(result);
-            });
+        chrome.tabs.query({ active: true, currentWindow: true }).then(tab => {
+            chrome.scripting.executeScript({
+                target: { tabId: tab[0].id },
+                function: getText,
+            }, () => {
+                new Promise(resolve => {
+                    chrome.runtime.onMessage.addListener(function listener(result) {
+                        chrome.runtime.onMessage.removeListener(listener);
+                        resolve(result);
+                    });
+                }).then(result => {
+                    populate(result);
+                })
+            })
         });
     }
 });

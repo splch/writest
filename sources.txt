@@ -1,5 +1,6 @@
 https://www.online-utility.org/text/analyzer.jsp
 https://en.wikipedia.org/wiki/Automated_readability_index
+https://developer.chrome.com/docs/extensions/mv3/getstarted/
 https://stackoverflow.com/a/40906564
 https://stackoverflow.com/a/55563958
 https://stackoverflow.com/a/27764538

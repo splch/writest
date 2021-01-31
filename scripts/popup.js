@@ -87,13 +87,7 @@ async function displayArray(array, id) {
             blocks_in_cluster: 5,
             callbacks: {
                 scrollingProgress: function (progress) {
-                    let scroll = parseInt(progress);
-                    if (Math.abs(scroll - lastScroll) > 10) {
-                        clusterize[id].refresh();
-                    }
-                    else {
-                        lastScroll = scroll;
-                    }
+                    clusterize[id].refresh();
                 }
             }
         });

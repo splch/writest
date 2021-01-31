@@ -75,13 +75,29 @@ async function searchGram(list) {
 }
 
 async function displayArray(array, id) {
-    let clusterize = new Clusterize({
-        rows: array,
-        scrollId: id + "Scroll",
-        contentId: id + "Content",
-        rows_in_block: 100,
-        blocks_in_cluster: 10,
-    });
+    if (clusterize[id]) {
+        clusterize[id].update(array);
+        document.getElementById(id + "Scroll").scrollTop = lastScroll = 0;
+    }
+    else {
+        clusterize[id] = new Clusterize({
+            rows: array,
+            scrollId: id + "Scroll",
+            contentId: id + "Content",
+            blocks_in_cluster: 5,
+            callbacks: {
+                scrollingProgress: function (progress) {
+                    let scroll = parseInt(progress);
+                    if (Math.abs(scroll - lastScroll) > 10) {
+                        clusterize[id].refresh();
+                    }
+                    else {
+                        lastScroll = scroll;
+                    }
+                }
+            }
+        });
+    }
 }
 
 async function displayStats(text, words) {
@@ -190,7 +206,6 @@ document.getElementById("phraseSize").addEventListener("change", () => {
         phraseWorker.postMessage(JSON.stringify(
             [words, parseInt(document.getElementById("phraseSize").value), "phrase", stopWords]
         ));
-        document.getElementById("frequencyScroll").scrollTop = 0;
     }
 });
 
@@ -215,6 +230,8 @@ document.getElementById("text").addEventListener("change", () => {
     document.getElementById("analyze").value = "Analyze Textarea";
 });
 
-let words;
+let words = [];
+let lastScroll = 0;
+let clusterize = { "frequency": null, "window": null, "ngram": null };
 
 document.getElementById("analyze").click();

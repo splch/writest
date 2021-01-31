@@ -156,39 +156,45 @@
 
         <small>Phrase length: </small>
         <input id="phraseSize" type="number" min="1" value="1">
-        <div class="clusterize">
-            <table class="clusterize-table">
-                <thead>
-                    <th>Phrase</th>
-                    <th>Count</th>
-                </thead>
-            </table>
-            <div id="frequencyScroll" class="clusterize-scroll">
+        <details>
+            <summary>Frequency</summary>
+            <div class="clusterize">
                 <table class="clusterize-table">
-                    <tbody id="frequencyContent" class="clusterize-content">
-                    </tbody>
+                    <thead>
+                        <th>Phrase</th>
+                        <th>Count</th>
+                    </thead>
                 </table>
+                <div id="frequencyScroll" class="clusterize-scroll">
+                    <table class="clusterize-table">
+                        <tbody id="frequencyContent" class="clusterize-content">
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </details>
 
         <hr>
 
         <small>Search window: </small>
         <input id="windowSize" type="number" min="2" value="3">
-        <div class="clusterize">
-            <table class="clusterize-table">
-                <thead>
-                    <th>Phrase</th>
-                    <th>Count</th>
-                </thead>
-            </table>
-            <div id="windowScroll" class="clusterize-scroll">
+        <details>
+            <summary>Window</summary>
+            <div class="clusterize">
                 <table class="clusterize-table">
-                    <tbody id="windowContent" class="clusterize-content">
-                    </tbody>
+                    <thead>
+                        <th>Phrase</th>
+                        <th>Count</th>
+                    </thead>
                 </table>
+                <div id="windowScroll" class="clusterize-scroll">
+                    <table class="clusterize-table">
+                        <tbody id="windowContent" class="clusterize-content">
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </details>
     </details>
 </body>
 

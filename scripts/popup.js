@@ -65,7 +65,7 @@ async function searchGram(list) {
             }
             displayArray(data, "ngram");
             let hiddenTables = document.getElementsByClassName("clusterize-table hideTable");
-            for (i = 0; i < hiddenTables.length; i++) {
+            for (let i = 0; i < hiddenTables.length; i++) {
                 hiddenTables[i].classList.remove("hideTable");
                 i--;
             }
@@ -79,6 +79,8 @@ async function displayArray(array, id) {
         rows: array,
         scrollId: id + "Scroll",
         contentId: id + "Content",
+        rows_in_block: 100,
+        blocks_in_cluster: 10,
     });
 }
 

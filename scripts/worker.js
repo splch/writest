@@ -36,7 +36,17 @@ function windowSort(words, size) {
     return freqMap;
 }
 
-function sortMap(freqMap, stopWords) {
+function ngramSort(words) {
+    let freqMap = [];
+    for (i = 0; i < words.length; i++) {
+        if (words[i].parent == "") {
+            freqMap[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
+        }
+    }
+    return freqMap;
+}
+
+function sortMap(freqMap, type, stopWords) {
     let items = Object.keys(freqMap).map(function (key) {
         return [key, freqMap[key]];
     });
@@ -44,7 +54,10 @@ function sortMap(freqMap, stopWords) {
         return second[1] - first[1];
     });
     for (let i = 0; i < items.length; i++) {
-        let row = `<td>${items[i][0]}</td><td>${items[i][1]}</td></tr>`;
+        let row = `<td>${items[i][0]}</td><td>${(type != "ngram") ?
+            items[i][1] :
+            items[i][1].toLocaleString("en-US", { style: "percent", minimumFractionDigits: 10 })
+        }</td></tr>`;
         if (stopWords.includes(items[i][0])) {
             items[i] = "<tr style='background: lightgrey'>" + row;
         }
@@ -64,10 +77,10 @@ self.addEventListener("message", function (e) {
     else if (type == "window") {
         freqMap = windowSort(words, size)
     }
-    else {
-        self.postMessage([words, size]);
+    else if (type == "ngram") {
+        freqMap = ngramSort(words)
     }
-    freqMap = sortMap(freqMap, stopWords);
+    freqMap = sortMap(freqMap, type, stopWords);
 
     self.postMessage([freqMap, size]);
 }, false);

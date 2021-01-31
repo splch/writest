@@ -30,9 +30,47 @@
 
         table,
         td {
+            padding: 2px;
             border: 1px solid black;
+            table-layout: auto;
+        }
+
+        .clusterize-scroll {
+            max-height: 300px;
+            width: max-content;
+            overflow: auto;
+        }
+
+        .clusterize-table {
+            width: 269px;
+        }
+
+        .hideTable {
+            display: none;
+        }
+
+        .clusterize-extra-row {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        .clusterize-extra-row.clusterize-keep-parity {
+            display: none;
+        }
+
+        .clusterize-content {
+            width: 200px;
+            outline: 0;
+            counter-reset: clusterize-counter;
+        }
+
+        .clusterize-no-data td {
+            text-align: left;
         }
     </style>
+    <script src="scripts/clusterize.min.js" defer></script>
+    <script src="scripts/wordList.js" defer></script>
+    <script src="scripts/popup.js" defer></script>
 </head>
 
 <body>
@@ -96,54 +134,68 @@
     <details>
         <summary>Additional features</summary>
 
-        <small>Limit table size: </small>
-        <input id="limit" type="checkbox" checked>
-
-        <br>
-
         <small>Ngram search: </small>
         <input id="ngramQuery" type="search" data-tip="Same as Ngram search">
         <input id="ngramSearch" type="button" value="&#x1F50D;">
-        <table hidden>
-            <thead>
-                <th>Word</th>
-                <th>Use</th>
-            </thead>
-            <tbody id="ngram"></tbody>
-        </table>
+        <div class="clusterize">
+            <table class="clusterize-table hideTable">
+                <thead>
+                    <th>Phrase</th>
+                    <th>Count</th>
+                </thead>
+            </table>
+            <div id="ngramScroll" class="clusterize-scroll">
+                <table class="clusterize-table hideTable">
+                    <tbody id="ngramContent" class="clusterize-content">
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <hr>
 
         <small>Phrase length: </small>
         <input id="phraseSize" type="number" min="1" value="1">
-        <details id="phraseTable">
+        <details>
             <summary>Frequency</summary>
-            <table>
-                <thead>
-                    <th>Phrase</th>
-                    <th>Count</th>
-                </thead>
-                <tbody id="frequency"></tbody>
-            </table>
+            <div class="clusterize">
+                <table class="clusterize-table">
+                    <thead>
+                        <th>Phrase</th>
+                        <th>Count</th>
+                    </thead>
+                </table>
+                <div id="frequencyScroll" class="clusterize-scroll">
+                    <table class="clusterize-table">
+                        <tbody id="frequencyContent" class="clusterize-content">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </details>
 
         <hr>
 
         <small>Search window: </small>
         <input id="windowSize" type="number" min="2" value="3">
-        <details id="windowTable">
+        <details>
             <summary>Repetition</summary>
-            <table>
-                <thead>
-                    <th>Word</th>
-                    <th>Count</th>
-                </thead>
-                <tbody id="window"></tbody>
-            </table>
+            <div class="clusterize">
+                <table class="clusterize-table">
+                    <thead>
+                        <th>Phrase</th>
+                        <th>Count</th>
+                    </thead>
+                </table>
+                <div id="windowScroll" class="clusterize-scroll">
+                    <table class="clusterize-table">
+                        <tbody id="windowContent" class="clusterize-content">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </details>
     </details>
-
-    <script src="popup.js"></script>
 </body>
 
 </html>

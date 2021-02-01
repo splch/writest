@@ -1,4 +1,5 @@
 let words = [];
+let stats = {};
 let lastScroll = 0;
 let clusterize = { "frequency": null, "window": null, "ngram": null };
 
@@ -51,15 +52,38 @@ async function displayArray(array, id) {
     }
 }
 
+function read(index) {
+    if (index == "fk") {
+        return Math.round(0.39 * (stats["wordsNum"] / stats["sentNum"]) + 11.8 * (stats["sylNum"] / stats["wordsNum"]) - 15.59);
+    }
+    else if (index == "ari") {
+        return Math.ceil(0.37 * (stats["wordsNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordsNum"]) - 26.01);
+    }
+}
+
+function syllables(word) {
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+    word = word.replace(/^y/, '');
+    let sylArray = word.match(/[aeiouy]{1,2}/g);
+    return sylArray ? sylArray.length : 1;
+}
+
 async function displayStats(text, words) {
-    const sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
-    const wordsNum = words.length;
+    sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
+    wordsNum = words.length;
     let charNum = 0;
     let lexNum = 0;
+    let sylNum = 0;
     for (let i = 0; i < wordsNum; i++) {
         charNum += words[i].length;
         lexNum += stopWords.includes(words[i]) ? 0 : 1;
+        sylNum += syllables(words[i]);
     }
+    stats["sentNum"] = sentNum;
+    stats["wordsNum"] = wordsNum;
+    stats["charNum"] = charNum;
+    stats["lexNum"] = lexNum;
+    stats["sylNum"] = sylNum;
 
     document.getElementById("charNum").innerText = charNum.toLocaleString("en-US");
     document.getElementById("wordNum").innerText = wordsNum.toLocaleString("en-US");
@@ -75,13 +99,7 @@ async function displayStats(text, words) {
         style: "percent"
     });
 
-    let ari = Math.ceil(
-        4.71 * (charNum / wordsNum) + 0.5 * (wordsNum / sentNum) - 21.43
-    );
-
-    if (ari < 1) ari = 1;
-    else if (ari > 14) ari = 14; 
-    document.getElementById("autoRead").innerText = ari;
+    document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
 async function populate(text) {
@@ -184,6 +202,12 @@ document.getElementById("analyze").addEventListener("click", () => {
 document.getElementById("text").addEventListener("change", () => {
     document.getElementById("text").custom = true;
     document.getElementById("analyze").value = "Analyze Textarea";
+});
+
+document.getElementById("selectIndex").addEventListener("change", () => {
+    if (words) {
+        document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
+    }
 });
 
 document.getElementById("ngramSearch").addEventListener("click", () => {

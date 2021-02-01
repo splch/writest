@@ -61,58 +61,38 @@ function read(index) {
     }
 }
 
-function syllables(word) {
-    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-    word = word.replace(/^y/, '');
-    let sylArray = word.match(/[aeiouy]{1,2}/g);
-    return sylArray ? sylArray.length : 1;
-}
-
-async function displayStats(text, words) {
-    sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
-    wordsNum = words.length;
-    let charNum = 0;
-    let lexNum = 0;
-    let sylNum = 0;
-    for (let i = 0; i < wordsNum; i++) {
-        charNum += words[i].length;
-        lexNum += stopWords.includes(words[i]) ? 0 : 1;
-        sylNum += syllables(words[i]);
-    }
-    stats["sentNum"] = sentNum;
-    stats["wordsNum"] = wordsNum;
-    stats["charNum"] = charNum;
-    stats["lexNum"] = lexNum;
-    stats["sylNum"] = sylNum;
-
-    document.getElementById("charNum").innerText = charNum.toLocaleString("en-US");
-    document.getElementById("wordNum").innerText = wordsNum.toLocaleString("en-US");
-    document.getElementById("sentNum").innerText = sentNum.toLocaleString("en-US");
-    document.getElementById("avgWord").innerText = (wordsNum / sentNum).toLocaleString("en-US", {
+async function displayStats() {
+    document.getElementById("charNum").innerText = stats["charNum"].toLocaleString("en-US");
+    document.getElementById("wordNum").innerText = stats["wordsNum"].toLocaleString("en-US");
+    document.getElementById("sentNum").innerText = stats["sentNum"].toLocaleString("en-US");
+    document.getElementById("avgWord").innerText = (stats["wordsNum"] / stats["sentNum"]).toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgChar").innerText = (charNum / wordsNum).toLocaleString("en-US", {
+    document.getElementById("avgChar").innerText = (stats["charNum"] / stats["wordsNum"]).toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
 
-    document.getElementById("lexDen").innerText = (lexNum / wordsNum).toLocaleString("en-US", {
+    document.getElementById("lexDen").innerText = (stats["lexNum"] / stats["wordsNum"]).toLocaleString("en-US", {
         style: "percent"
     });
 
     document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
-async function populate(text) {
-    words = text.toLowerCase().split(/\P{L}+/u);
-    for (let i = 0; i < words.length; i++) {
-        if (["s", "t", "d", "m", "ve", "ll", "re", "ch", ""].includes(words[i])) {
-            words.splice(i, 1);
-            i--;
-        }
-    }
+async function calculateStats(text, words) {
+    let statWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+    statWorker.addEventListener("message", function (e) {
+        stats = e.data[0];
+        displayStats();
+    });
 
-    document.getElementById("text").value = text;
-    displayStats(text, words);
+    statWorker.postMessage(JSON.stringify(
+        [words, text, "stats", stopWords]
+    ));
+}
+
+async function populate(text, words) {
+    calculateStats(text, words);
 
     let phraseWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
     let windowWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
@@ -136,6 +116,20 @@ async function populate(text) {
     windowWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("windowSize").value), "window", stopWords]
     ));
+}
+
+async function calcWords(text) {
+    document.getElementById("text").value = text;
+    let wordWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+    wordWorker.addEventListener("message", function (e) {
+        words = e.data[0]["words"];
+        populate(text, words);
+    });
+
+    wordWorker.postMessage(JSON.stringify(
+        [[], text, "words", stopWords]
+    ));
+
 }
 
 async function getText() {
@@ -178,7 +172,7 @@ async function getText() {
 
 document.getElementById("analyze").addEventListener("click", () => {
     if (document.getElementById("text").custom) {
-        populate(document.getElementById("text").value);
+        calcWords(document.getElementById("text").value);
     }
     else {
         chrome.tabs.query({ active: true, currentWindow: true }).then(tab => {
@@ -192,7 +186,7 @@ document.getElementById("analyze").addEventListener("click", () => {
                         resolve(result);
                     });
                 }).then(result => {
-                    populate(result);
+                    calcWords(result);
                 })
             })
         });

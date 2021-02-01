@@ -37,13 +37,13 @@ function windowSort(words, size) {
 }
 
 function ngramSort(words) {
-    let freqMap = [];
+    let ngrams = [];
     for (i = 0; i < words.length; i++) {
         if (words[i].parent == "") {
-            freqMap[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
+            ngrams[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
         }
     }
-    return freqMap;
+    return ngrams;
 }
 
 function sortMap(freqMap, type, stopWords) {
@@ -68,23 +68,70 @@ function sortMap(freqMap, type, stopWords) {
     return items;
 }
 
+function wordSplit(text) {
+    text = text.toLowerCase().split(/\P{L}+/u);
+    for (let i = 0; i < text.length; i++) {
+        if (["s", "t", "d", "m", "ve", "ll", "re", "ch", ""].includes(text[i])) {
+            text.splice(i, 1);
+            i--;
+        }
+    }
+    return {"words": text};
+}
+
+function syllables(word) {
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+    word = word.replace(/^y/, '');
+    let sylArray = word.match(/[aeiouy]{1,2}/g);
+    return sylArray ? sylArray.length : 1;
+}
+
+function statsCalc(words, text, stopWords) {
+    let stats = {};
+    let sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
+    let wordsNum = words.length;
+    let charNum = 0;
+    let lexNum = 0;
+    let sylNum = 0;
+    for (let i = 0; i < wordsNum; i++) {
+        charNum += words[i].length;
+        lexNum += stopWords.includes(words[i]) ? 0 : 1;
+        sylNum += syllables(words[i]);
+    }
+    stats["sentNum"] = sentNum;
+    stats["wordsNum"] = wordsNum;
+    stats["charNum"] = charNum;
+    stats["lexNum"] = lexNum;
+    stats["sylNum"] = sylNum;
+    return stats;
+}
+
 self.addEventListener("message", function (e) {
     let [words, size, type, stopWords] = JSON.parse(e.data);
+    console.time(`${type} processing`);
     let freqMap = {};
     if (type == "phrase") {
         if (size > 0) {
-            freqMap = phraseSort(words, size)
+            freqMap = phraseSort(words, size);
         }
     }
     else if (type == "window") {
         if (size > 1) {
-            freqMap = windowSort(words, size)
+            freqMap = windowSort(words, size);
         }
     }
     else if (type == "ngram") {
-        freqMap = ngramSort(words)
+        freqMap = ngramSort(words);
     }
-    freqMap = sortMap(freqMap, type, stopWords);
-
+    else if (type == "words") {
+        freqMap = wordSplit(size);
+    }
+    else if (type == "stats") {
+        freqMap = statsCalc(words, size, stopWords);
+    }
+    if (type != "stats" && type != "words") {
+        freqMap = sortMap(freqMap, type, stopWords);
+    }
     self.postMessage([freqMap, size]);
-}, false);
+    console.timeEnd(`${type} processing`);
+});

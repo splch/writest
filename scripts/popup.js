@@ -64,15 +64,15 @@ function read(index) {
     else if (index == "ari") {
         gl = Math.ceil(0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01);
     }
+    else if (index == "smog") {
+        gl = 1.043 * Math.sqrt(stats["polySylNum"] * 30 / stats["sentNum"]) + 3.1291;
+    }
     // else if (index == "lin") {
     //     gl = (stats["wordNum"] + 2 * stats["polySylNum"]) / stats["sentNum"];
     //     gl = gl > 20 ? gl / 2 : (gl - 2) / 2;
     // }
-    // else if (index == "smog") {
-    //     gl = 1.0430 * Math.sqrt(30 * stats["polySylNum"] / stats["wordNum"]) + 3.1291;
-    // }
     else {
-        return Math.round(10 * (read("fk") + read("fog") + read("cl") + read("ari")) / 4) / 10;
+        return Math.round(10 * (read("fk") + read("fog") + read("cl") + read("ari") + read("smog")) / 4) / 10;
     }
     return Math.round(gl);
 }

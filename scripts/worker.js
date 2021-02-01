@@ -57,7 +57,7 @@ function sortMap(freqMap, type, stopWords) {
         let row = `<td>${items[i][0]}</td><td>${(type != "ngram") ?
             items[i][1] :
             items[i][1].toLocaleString("en-US", { style: "percent", minimumFractionDigits: 10 })
-        }</td></tr>`;
+            }</td></tr>`;
         if (stopWords.includes(items[i][0])) {
             items[i] = "<tr style='background: lightgrey'>" + row;
         }

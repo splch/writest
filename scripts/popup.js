@@ -1,3 +1,7 @@
+let words = [];
+let lastScroll = 0;
+let clusterize = { "frequency": null, "window": null, "ngram": null };
+
 async function searchGram(list) {
     let query = "";
     for (let i = 0; i < list.length; i++) {
@@ -100,7 +104,7 @@ async function populate(text) {
         if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
             displayArray(e.data[0], "window");
         }
-    }, false);
+    });
 
     phraseWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("phraseSize").value), "phrase", stopWords]
@@ -206,7 +210,7 @@ document.getElementById("windowSize").addEventListener("change", () => {
             if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
                 displayArray(e.data[0], "window");
             }
-        }, false);
+        });
 
         windowWorker.postMessage(JSON.stringify(
             [words, parseInt(document.getElementById("windowSize").value), "window", stopWords]
@@ -214,9 +218,5 @@ document.getElementById("windowSize").addEventListener("change", () => {
         document.getElementById("windowScroll").scrollTop = 0;
     }
 });
-
-let words = [];
-let lastScroll = 0;
-let clusterize = { "frequency": null, "window": null, "ngram": null };
 
 document.getElementById("analyze").click();

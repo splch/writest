@@ -87,7 +87,7 @@ async function calculateStats(text, words) {
     });
 
     statWorker.postMessage(JSON.stringify(
-        [words, text, "stats", stopWords]
+        [words, text, "stats"]
     ));
 }
 
@@ -110,11 +110,11 @@ async function populate(text, words) {
     });
 
     phraseWorker.postMessage(JSON.stringify(
-        [words, parseInt(document.getElementById("phraseSize").value), "phrase", stopWords]
+        [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
     ));
 
     windowWorker.postMessage(JSON.stringify(
-        [words, parseInt(document.getElementById("windowSize").value), "window", stopWords]
+        [words, parseInt(document.getElementById("windowSize").value), "window"]
     ));
 }
 
@@ -127,7 +127,7 @@ async function calcWords(text) {
     });
 
     wordWorker.postMessage(JSON.stringify(
-        [[], text, "words", stopWords]
+        [[], text, "words"]
     ));
 
 }
@@ -221,7 +221,7 @@ document.getElementById("phraseSize").addEventListener("change", () => {
         });
 
         phraseWorker.postMessage(JSON.stringify(
-            [words, parseInt(document.getElementById("phraseSize").value), "phrase", stopWords]
+            [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
         ));
     }
 });
@@ -236,7 +236,7 @@ document.getElementById("windowSize").addEventListener("change", () => {
         });
 
         windowWorker.postMessage(JSON.stringify(
-            [words, parseInt(document.getElementById("windowSize").value), "window", stopWords]
+            [words, parseInt(document.getElementById("windowSize").value), "window"]
         ));
         document.getElementById("windowScroll").scrollTop = 0;
     }

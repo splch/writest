@@ -70,12 +70,16 @@ function sortMap(freqMap, type, stopWords) {
 
 self.addEventListener("message", function (e) {
     let [words, size, type, stopWords] = JSON.parse(e.data);
-    let freqMap;
+    let freqMap = {};
     if (type == "phrase") {
-        freqMap = phraseSort(words, size)
+        if (size > 0) {
+            freqMap = phraseSort(words, size)
+        }
     }
     else if (type == "window") {
-        freqMap = windowSort(words, size)
+        if (size > 1) {
+            freqMap = windowSort(words, size)
+        }
     }
     else if (type == "ngram") {
         freqMap = ngramSort(words)

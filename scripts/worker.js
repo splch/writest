@@ -41,9 +41,7 @@ function windowSort(words, size) {
 function ngramSort(words) {
     let ngrams = [];
     for (i = 0; i < words.length; i++) {
-        if (words[i].parent == "") {
-            ngrams[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
-        }
+        ngrams[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
     }
     return ngrams;
 }

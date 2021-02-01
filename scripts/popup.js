@@ -74,9 +74,14 @@ async function displayStats(text, words) {
     document.getElementById("lexDen").innerText = (lexNum / wordsNum).toLocaleString("en-US", {
         style: "percent"
     });
-    document.getElementById("autoRead").innerText = Math.ceil(
+
+    let ari = Math.ceil(
         4.71 * (charNum / wordsNum) + 0.5 * (wordsNum / sentNum) - 21.43
     );
+
+    if (ari < 1) ari = 1;
+    else if (ari > 14) ari = 14; 
+    document.getElementById("autoRead").innerText = ari;
 }
 
 async function populate(text) {

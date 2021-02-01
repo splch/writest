@@ -1,5 +1,6 @@
 https://clusterize.js.org/
 http://www.dtic.mil/dtic/tr/fulltext/u2/a006655.pdf
+https://doi.org/10.1109/TPC.2016.2635720
 https://www.online-utility.org/text/analyzer.jsp
 https://en.wikipedia.org/wiki/Automated_readability_index
 https://developer.chrome.com/docs/extensions/mv3/getstarted/

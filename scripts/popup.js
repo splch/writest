@@ -1,7 +1,6 @@
 let words = [];
 let stats = {};
-let lastScroll = 0;
-let clusterize = { "frequency": null, "window": null, "ngram": null };
+let clusterize = { "phrase": null, "window": null, "ngram": null };
 
 async function searchGram(list) {
     let query = "";
@@ -11,7 +10,6 @@ async function searchGram(list) {
 
     let xhr = new XMLHttpRequest();
     let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) + "&year_start=2018&year_end=2019&corpus=26&smoothing=0&case_insensitive=on";
-
     xhr.open("GET", url);
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -35,7 +33,7 @@ async function searchGram(list) {
 async function displayArray(array, id) {
     if (clusterize[id]) {
         clusterize[id].update(array);
-        document.getElementById(id + "Scroll").scrollTop = lastScroll = 0;
+        document.getElementById(id + "Scroll").scrollTop = 0;
     }
     else {
         clusterize[id] = new Clusterize({
@@ -53,26 +51,37 @@ async function displayArray(array, id) {
 }
 
 function read(index) {
+    let gl;
     if (index == "fk") {
-        return Math.round(0.39 * (stats["wordsNum"] / stats["sentNum"]) + 11.8 * (stats["sylNum"] / stats["wordsNum"]) - 15.59);
+        gl = 0.39 * (stats["wordNum"] / stats["sentNum"]) + 11.8 * (stats["sylNum"] / stats["wordNum"]) - 15.59;
+    }
+    else if (index == "smog") {
+        gl = 1.0430 * Math.sqrt(stats["polySylNum"] * 30 / stats["sentNum"]) + 3.1291;
     }
     else if (index == "ari") {
-        return Math.ceil(0.37 * (stats["wordsNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordsNum"]) - 26.01);
+        gl = Math.ceil(0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01);
     }
+    else if (index == "cl") {
+        gl = 0.0588 * (100 * stats["charNum"] / stats["wordNum"]) - 0.296 * (100 * stats["sentNum"] / stats["wordNum"]) - 15.8;
+    }
+    else {
+        return Math.round((read("fk") + read("smog") + read("ari") + read("cl")) / 4);
+    }
+    return Math.round(gl);
 }
 
 async function displayStats() {
     document.getElementById("charNum").innerText = stats["charNum"].toLocaleString("en-US");
-    document.getElementById("wordNum").innerText = stats["wordsNum"].toLocaleString("en-US");
+    document.getElementById("wordNum").innerText = stats["wordNum"].toLocaleString("en-US");
     document.getElementById("sentNum").innerText = stats["sentNum"].toLocaleString("en-US");
-    document.getElementById("avgWord").innerText = (stats["wordsNum"] / stats["sentNum"]).toLocaleString("en-US", {
+    document.getElementById("avgWord").innerText = (stats["wordNum"] / stats["sentNum"]).toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgChar").innerText = (stats["charNum"] / stats["wordsNum"]).toLocaleString("en-US", {
+    document.getElementById("avgChar").innerText = (stats["charNum"] / stats["wordNum"]).toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
 
-    document.getElementById("lexDen").innerText = (stats["lexNum"] / stats["wordsNum"]).toLocaleString("en-US", {
+    document.getElementById("lexDen").innerText = (stats["lexNum"] / stats["wordNum"]).toLocaleString("en-US", {
         style: "percent"
     });
 
@@ -99,7 +108,7 @@ async function populate(text, words) {
 
     phraseWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
-            displayArray(e.data[0], "frequency");
+            displayArray(e.data[0], "phrase");
         }
     });
 
@@ -216,7 +225,7 @@ document.getElementById("phraseSize").addEventListener("change", () => {
         let phraseWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
         phraseWorker.addEventListener("message", function (e) {
             if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
-                displayArray(e.data[0], "frequency");
+                displayArray(e.data[0], "phrase");
             }
         });
 
@@ -238,7 +247,6 @@ document.getElementById("windowSize").addEventListener("change", () => {
         windowWorker.postMessage(JSON.stringify(
             [words, parseInt(document.getElementById("windowSize").value), "window"]
         ));
-        document.getElementById("windowScroll").scrollTop = 0;
     }
 });
 

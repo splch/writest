@@ -91,20 +91,26 @@ function syllables(word) {
 function statsCalc(words, text, stopWords) {
     let stats = {};
     let sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
-    let wordsNum = words.length;
+    let wordNum = words.length;
     let charNum = 0;
     let lexNum = 0;
     let sylNum = 0;
-    for (let i = 0; i < wordsNum; i++) {
+    let polySylNum = 0;
+    for (let i = 0; i < wordNum; i++) {
         charNum += words[i].length;
         lexNum += stopWords.includes(words[i]) ? 0 : 1;
-        sylNum += syllables(words[i]);
+        syl = syllables(words[i]);
+        if (syl > 2) {
+            polySylNum++;
+        }
+        sylNum += syl;
     }
     stats["sentNum"] = sentNum;
-    stats["wordsNum"] = wordsNum;
+    stats["wordNum"] = wordNum;
     stats["charNum"] = charNum;
     stats["lexNum"] = lexNum;
     stats["sylNum"] = sylNum;
+    stats["polySylNum"] = polySylNum;
     return stats;
 }
 

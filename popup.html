@@ -107,8 +107,11 @@
             <tr>
                 <td>
                     <select id="selectIndex">
+                        <option value="avg">Average Readability</option>
                         <option value="fk">Flesch–Kincaid Grade Level</option>
+                        <option value="smog">SMOG Index</option>
                         <option value="ari">Automated Readability Index</option>
+                        <option value="cl">Coleman-Liau Index</option>
                     </select>
                 </td>
                 <td id="read"></td>
@@ -156,9 +159,9 @@
                         <th>Count</th>
                     </thead>
                 </table>
-                <div id="frequencyScroll" class="clusterize-scroll">
+                <div id="phraseScroll" class="clusterize-scroll">
                     <table class="clusterize-table">
-                        <tbody id="frequencyContent" class="clusterize-content">
+                        <tbody id="phraseContent" class="clusterize-content">
                         </tbody>
                     </table>
                 </div>

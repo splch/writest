@@ -53,7 +53,7 @@ function read(index) {
     let gl
     if (index == "fk") {
         gl = 0.39 * (stats["wordNum"] / stats["sentNum"]) + 11.8 * (stats["sylNum"] / stats["wordNum"]) - 15.59;
-        if (gl < 0) { gl = 0 };
+        gl = gl < 0 ? 0 : gl;
     }
     else if (index == "fog") {
         gl = 0.4 * (stats["wordNum"] / stats["sentNum"] + stats["polySylNum"] / stats["wordNum"]);
@@ -63,11 +63,11 @@ function read(index) {
     }
     else if (index == "cl") {
         gl = 0.0588 * (100 * stats["charNum"] / stats["wordNum"]) - 0.296 * (100 * stats["sentNum"] / stats["wordNum"]) - 15.8;
-        if (gl < 0) { gl = 0 };
+        gl = gl < 0 ? 0 : gl;
     }
     else if (index == "ari") {
         gl = Math.ceil(0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01);
-        if (gl < 0) { gl = 0 };
+        gl = gl < 0 ? 0 : gl;
     }
     // else if (index == "lin") {
     //     gl = (stats["wordNum"] + 2 * stats["polySylNum"]) / stats["sentNum"];

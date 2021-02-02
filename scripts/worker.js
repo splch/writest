@@ -68,6 +68,8 @@ function sortMap(freqMap, type, stopWords) {
         words.forEach((word) => {
             gray += stopWords.includes(word.toLowerCase()) ? 1 : 0;
         });
+        // items[i] = `<tr style="color: #000000${ Math.round(255 - 255/2 * gray/words.length).toString(16) }">` + row;
+        // items[i] = `<tr style="background: #CCCCCC${ Math.round(255 * gray/words.length).toString(16) }">` + row;
         if (gray == words.length) {
             items[i] = '<tr style="background: #CCCCCC">' + row;
         }

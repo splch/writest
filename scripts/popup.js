@@ -71,7 +71,7 @@ function read(index) {
     }
     // else if (index == "lin") {
     //     gl = (stats["wordNum"] + 2 * stats["polySylNum"]) / stats["sentNum"];
-    //     gl = gl > 20 ? gl / 2 : (gl - 2) / 2;
+    //     gl = gl > 20 ? gl / 2 : gl / 2 - 1;
     // }
     else {
         console.time("avg readability");

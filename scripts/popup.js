@@ -4,8 +4,9 @@ let clusterize = { "phrase": null, "window": null, "ngram": null };
 
 async function searchGram(list) {
     let query = "";
-    list.forEach((word) => query += word.replaceAll(" ", "+") + "%2C");
-
+    list.forEach((word) => {
+        query += word.replaceAll(" ", "+") + "%2C"
+    });
     let xhr = new XMLHttpRequest();
     let year = 2019;
     let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) +
@@ -16,7 +17,9 @@ async function searchGram(list) {
             let ngramWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
             ngramWorker.addEventListener("message", function (e) {
                 displayArray(e.data[0], "ngram");
-                Array.from(document.getElementsByClassName("hideTable")).forEach((table) => table.classList.remove("hideTable"));
+                Array.from(document.getElementsByClassName("hideTable")).forEach((table) => {
+                    table.classList.remove("hideTable")
+                });
             });
             ngramWorker.postMessage(JSON.stringify(
                 [JSON.parse(xhr.responseText), 0, "ngram"]
@@ -36,7 +39,6 @@ async function displayArray(array, id) {
             rows: array,
             scrollId: id + "Scroll",
             contentId: id + "Content",
-            blocks_in_cluster: 5,
             callbacks: {
                 scrollingProgress: function (progress) {
                     clusterize[id].refresh();

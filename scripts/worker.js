@@ -76,7 +76,7 @@ function wordSplit(text) {
             i--;
         }
     }
-    return {"words": text};
+    return { "words": text };
 }
 
 function syllables(word) {
@@ -88,7 +88,7 @@ function syllables(word) {
 
 function statsCalc(words, text, stopWords) {
     let stats = {};
-    let sentNum = (text.match(/\.{1,}|\?{1,}|\!{1,}/g) || []).length;
+    let sentNum = (text.match(/\.+|\?+|\!+|\S(\s*\n|$)/g) || []).length;
     let wordNum = words.length;
     let charNum = 0;
     let lexNum = 0;
@@ -138,6 +138,6 @@ self.addEventListener("message", function (e) {
     if (type != "stats" && type != "words") {
         freqMap = sortMap(freqMap, type, stopWords);
     }
-    self.postMessage([freqMap, size]);
     console.timeEnd(`${type} processing`);
+    self.postMessage([freqMap, size]);
 });

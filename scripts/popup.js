@@ -4,26 +4,22 @@ let clusterize = { "phrase": null, "window": null, "ngram": null };
 
 async function searchGram(list) {
     let query = "";
-    for (let i = 0; i < list.length; i++) {
-        query += list[i].replaceAll(" ", "+") + "%2C";
-    }
+    list.forEach((word) => query += word.replaceAll(" ", "+") + "%2C");
 
     let xhr = new XMLHttpRequest();
-    let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) + "&year_start=2018&year_end=2019&corpus=26&smoothing=0&case_insensitive=on";
+    let year = 2019;
+    let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) +
+        "&year_start=" + (year - 1) + "&year_end=" + year + "&corpus=26&smoothing=0&case_insensitive=on";
     xhr.open("GET", url);
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             let ngramWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
             ngramWorker.addEventListener("message", function (e) {
                 displayArray(e.data[0], "ngram");
-                let hiddenTables = document.getElementsByClassName("clusterize-table hideTable");
-                for (let i = 0; i < hiddenTables.length; i++) {
-                    hiddenTables[i].classList.remove("hideTable");
-                    i--;
-                }
+                Array.from(document.getElementsByClassName("hideTable")).forEach((table) => table.classList.remove("hideTable"));
             });
             ngramWorker.postMessage(JSON.stringify(
-                [JSON.parse(xhr.responseText), 0, "ngram", []]
+                [JSON.parse(xhr.responseText), 0, "ngram"]
             ));
         }
     };
@@ -87,11 +83,9 @@ async function displayStats() {
     document.getElementById("avgChar").innerText = (stats["charNum"] / stats["wordNum"]).toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-
     document.getElementById("lexDen").innerText = (stats["lexNum"] / stats["wordNum"]).toLocaleString("en-US", {
         style: "percent"
     });
-
     document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
@@ -101,7 +95,6 @@ async function calculateStats(text, words) {
         stats = e.data[0];
         displayStats();
     });
-
     statWorker.postMessage(JSON.stringify(
         [words, text, "stats"]
     ));
@@ -118,17 +111,14 @@ async function populate(text, words) {
             displayArray(e.data[0], "phrase");
         }
     });
-
     windowWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
             displayArray(e.data[0], "window");
         }
     });
-
     phraseWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
     ));
-
     windowWorker.postMessage(JSON.stringify(
         [words, parseInt(document.getElementById("windowSize").value), "window"]
     ));
@@ -141,11 +131,9 @@ async function calcWords(text) {
         words = e.data[0]["words"];
         populate(text, words);
     });
-
     wordWorker.postMessage(JSON.stringify(
-        [[], text, "words"]
+        [words, text, "words"]
     ));
-
 }
 
 async function getText() {
@@ -171,7 +159,7 @@ async function getText() {
                 );
             }
         };
-        xhr.timeout = 1e4;
+        xhr.timeout = 5e3;
         xhr.ontimeout = function () {
             chrome.runtime.sendMessage(
                 "Copy your text in here, and press the Analyze Textarea button."
@@ -235,7 +223,6 @@ document.getElementById("phraseSize").addEventListener("change", () => {
                 displayArray(e.data[0], "phrase");
             }
         });
-
         phraseWorker.postMessage(JSON.stringify(
             [words, parseInt(document.getElementById("phraseSize").value), "phrase"]
         ));
@@ -250,7 +237,6 @@ document.getElementById("windowSize").addEventListener("change", () => {
                 displayArray(e.data[0], "window");
             }
         });
-
         windowWorker.postMessage(JSON.stringify(
             [words, parseInt(document.getElementById("windowSize").value), "window"]
         ));

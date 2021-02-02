@@ -50,15 +50,18 @@
             outline: 0;
             counter-reset: clusterize-counter;
         }
+
+        #analyze {
+            display: block;
+            margin: auto;
+        }
     </style>
     <script src="scripts/clusterize.js" defer></script>
     <script src="scripts/popup.js" defer></script>
 </head>
 
 <body>
-    <div>
-        <input id="analyze" type="button" value="Analyze Webpage">
-    </div>
+    <input id="analyze" type="button" value="Analyze Webpage">
 
     <hr>
 
@@ -132,8 +135,8 @@
         <div class="clusterize">
             <table class="clusterize-table hideTable">
                 <thead>
-                    <th>Phrase</th>
-                    <th>Count</th>
+                    <th>Ngram</th>
+                    <th>Frequency</th>
                 </thead>
             </table>
             <div id="ngramScroll" class="clusterize-scroll">
@@ -175,7 +178,7 @@
             <div class="clusterize">
                 <table class="clusterize-table">
                     <thead>
-                        <th>Phrase</th>
+                        <th>Word</th>
                         <th>Count</th>
                     </thead>
                 </table>

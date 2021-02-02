@@ -17,7 +17,7 @@ async function searchGram(list) {
             let ngramWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
             ngramWorker.addEventListener("message", function (e) {
                 displayArray(e.data[0], "ngram");
-                Array.from(document.getElementsByClassName("hideTable")).forEach((table) => {
+                document.querySelectorAll(".hideTable").forEach((table) => {
                     table.classList.remove("hideTable")
                 });
             });
@@ -39,6 +39,7 @@ async function displayArray(array, id) {
             rows: array,
             scrollId: id + "Scroll",
             contentId: id + "Content",
+            show_no_data_row: false,
             callbacks: {
                 scrollingProgress: function (progress) {
                     clusterize[id].refresh();
@@ -52,6 +53,7 @@ function read(index) {
     let gl
     if (index == "fk") {
         gl = 0.39 * (stats["wordNum"] / stats["sentNum"]) + 11.8 * (stats["sylNum"] / stats["wordNum"]) - 15.59;
+        if (gl < 0) { gl = 0 };
     }
     else if (index == "fog") {
         gl = 0.4 * (stats["wordNum"] / stats["sentNum"] + stats["polySylNum"] / stats["wordNum"]);
@@ -61,16 +63,20 @@ function read(index) {
     }
     else if (index == "cl") {
         gl = 0.0588 * (100 * stats["charNum"] / stats["wordNum"]) - 0.296 * (100 * stats["sentNum"] / stats["wordNum"]) - 15.8;
+        if (gl < 0) { gl = 0 };
     }
     else if (index == "ari") {
         gl = Math.ceil(0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01);
+        if (gl < 0) { gl = 0 };
     }
     // else if (index == "lin") {
     //     gl = (stats["wordNum"] + 2 * stats["polySylNum"]) / stats["sentNum"];
     //     gl = gl > 20 ? gl / 2 : (gl - 2) / 2;
     // }
     else {
-        return Math.round(2 * (read("fk") + read("fog") + read("smog") + read("cl") + read("ari"))) / 10;
+        return Math.round(10 * (
+            2 * read("fk") + 1.8 * read("fog") + 1.75 * read("smog") + 1.25 * read("cl") + 1 * read("ari")
+        ) / (2 + 1.8 + 1.75 + 1.25 + 1)) / 10;
     }
     return Math.round(gl);
 }
@@ -193,8 +199,8 @@ document.getElementById("analyze").addEventListener("click", () => {
                     });
                 }).then(result => {
                     calcWords(result);
-                })
-            })
+                });
+            });
         });
     }
 });
@@ -243,6 +249,12 @@ document.getElementById("windowSize").addEventListener("change", () => {
             [words, parseInt(document.getElementById("windowSize").value), "window"]
         ));
     }
+});
+
+document.querySelectorAll("details > details").forEach(details => {
+    details.addEventListener("toggle", event => {
+        document.getElementsByTagName("html")[0].scrollTop = document.getElementsByTagName("html")[0].scrollHeight;
+    });
 });
 
 document.getElementById("analyze").click();

@@ -173,7 +173,7 @@ async function getText() {
         xhr.timeout = 5e3;
         xhr.ontimeout = function () {
             chrome.runtime.sendMessage(
-                "Copy your text in here, and press the Analyze Textarea button."
+                "Text request failed.\n\nThese tips may help:\n\t1. Make sure your main Google account is accessing the document.\n\t2. Copy your text in here, and press the Analyze Textarea button.\n\t3. Reload the extension and try again."
             );
         }
         xhr.send();

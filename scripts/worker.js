@@ -2,7 +2,8 @@ const stopWords = ["a", "about", "above", "across", "after", "again", "against",
 
 function phraseSort(words, size) {
     let freqMap = {};
-    for (let i = size; i < words.length; i++) {
+    let length = words.length;
+    for (let i = size; i < length; i++) {
         let phrase = "";
         for (let j = size; j > 0; j--) {
             phrase += words[i - j] + " ";
@@ -18,7 +19,8 @@ function phraseSort(words, size) {
 
 function windowSort(words, size) {
     let freqMap = {}
-    for (let i = size; i < words.length; i += size - 1) {
+    let length = words.length;
+    for (let i = size; i < length; i += size - 1) {
         let windowMap = {};
         for (let j = size; j > 0; j--) {
             if (!windowMap[words[i - j]]) {
@@ -40,7 +42,8 @@ function windowSort(words, size) {
 
 function ngramSort(words) {
     let ngrams = [];
-    for (i = 0; i < words.length; i++) {
+    let length = words.length;
+    for (i = 0; i < length; i++) {
         ngrams[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
     }
     return ngrams;
@@ -66,7 +69,7 @@ function sortMap(freqMap, type, stopWords) {
             gray += stopWords.includes(word.toLowerCase()) ? 1 : 0;
         });
         if (gray == words.length) {
-            items[i] = "<tr style='background: #CCCCCC'>" + row;
+            items[i] = '<tr style="background: #CCCCCC">' + row;
         }
         else {
             items[i] = "<tr>" + row;
@@ -77,7 +80,8 @@ function sortMap(freqMap, type, stopWords) {
 
 function wordSplit(text) {
     text = text.toLowerCase().split(/\P{L}+/u);
-    for (let i = 0; i < text.length; i++) {
+    let length = text.length;
+    for (let i = 0; i < length; i++) {
         if (["s", "t", "d", "m", "ve", "ll", "re", "ch", ""].includes(text[i])) {
             text.splice(i, 1);
             i--;

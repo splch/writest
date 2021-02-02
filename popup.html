@@ -35,7 +35,7 @@
             table-layout: auto;
         }
 
-        tr:hover {
+        tbody tr:hover {
             background: lightyellow !important;
         }
 
@@ -94,10 +94,10 @@
     <details open>
         <summary>Statistics</summary>
         <table id="stats">
-            <tr>
+            <thead>
                 <th>Counts</th>
                 <th>Number</th>
-            </tr>
+            </thead>
             <tr>
                 <td>Characters</td>
                 <td id="charNum"></td>
@@ -118,10 +118,10 @@
                 <td>Average characters per word</td>
                 <td id="avgChar"></td>
             </tr>
-            <tr>
+            <thead>
                 <th>Derived</th>
                 <th>Number</th>
-            </tr>
+            </thead>
             <tr>
                 <td>
                     <select id="selectIndex">
@@ -134,7 +134,7 @@
                         <!-- <option value="lin">Linsear Write</option> -->
                     </select>
                 </td>
-                <td id="read"></td>
+                <td id="read" title="Grade Level"></td>
             </tr>
             <tr>
                 <td>Lexical Density</td>

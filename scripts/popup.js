@@ -219,7 +219,7 @@ document.getElementById("selectIndex").addEventListener("change", () => {
 document.getElementById("ngramSearch").addEventListener("click", () => {
     let data = document.getElementById("ngramQuery").value;
     if (data) {
-        searchGram(data.replaceAll(/,{2,}/g, ",").split(/, | ,| , |,/));
+        searchGram(data.replaceAll(/,{2,}/g, ",").split(/\s*,\s*/));
     }
 });
 
@@ -253,7 +253,7 @@ document.getElementById("windowSize").addEventListener("change", () => {
 
 document.querySelectorAll("details > details").forEach(details => {
     details.addEventListener("toggle", event => {
-        document.getElementsByTagName("html")[0].scrollTop = document.getElementsByTagName("html")[0].scrollHeight;
+        event.target.scrollIntoView();
     });
 });
 

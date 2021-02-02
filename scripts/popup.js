@@ -74,9 +74,12 @@ function read(index) {
     //     gl = gl > 20 ? gl / 2 : (gl - 2) / 2;
     // }
     else {
-        return Math.round(10 * (
+        console.time("avg readability");
+        gl = Math.round(10 * (
             2 * read("fk") + 1.8 * read("fog") + 1.75 * read("smog") + 1.25 * read("cl") + 1 * read("ari")
         ) / (2 + 1.8 + 1.75 + 1.25 + 1)) / 10;
+        console.timeEnd("avg readability");
+        return gl;
     }
     return Math.round(gl);
 }

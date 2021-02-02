@@ -53,13 +53,20 @@ function sortMap(freqMap, type, stopWords) {
     items.sort(function (first, second) {
         return second[1] - first[1];
     });
-    for (let i = 0; i < items.length; i++) {
+    let length = items.length;
+    for (let i = 0; i < length; i++) {
         let row = `<td>${items[i][0]}</td><td>${(type != "ngram") ?
             items[i][1] :
             items[i][1].toLocaleString("en-US", { style: "percent", minimumFractionDigits: 10 })
             }</td></tr>`;
-        if (stopWords.includes(items[i][0])) {
-            items[i] = "<tr style='background: lightgrey'>" + row;
+
+        let gray = 0;
+        let words = items[i][0].split(" ");
+        words.forEach((word) => {
+            gray += stopWords.includes(word.toLowerCase()) ? 1 : 0;
+        });
+        if (gray == words.length) {
+            items[i] = "<tr style='background: #CCCCCC'>" + row;
         }
         else {
             items[i] = "<tr>" + row;

@@ -2,7 +2,7 @@ const stopWords = ["a", "about", "above", "across", "after", "again", "against",
 
 function phraseSort(words, size) {
     let freqMap = {};
-    let length = words.length;
+    const length = words.length;
     for (let i = size; i < length; i++) {
         let phrase = "";
         for (let j = size; j > 0; j--) {
@@ -18,8 +18,8 @@ function phraseSort(words, size) {
 }
 
 function windowSort(words, size) {
-    let freqMap = {}
-    let length = words.length;
+    let freqMap = {};
+    const length = words.length;
     for (let i = size; i < length; i += size - 1) {
         let windowMap = {};
         for (let j = size; j > 0; j--) {
@@ -42,8 +42,8 @@ function windowSort(words, size) {
 
 function ngramSort(words) {
     let ngrams = [];
-    let length = words.length;
-    for (i = 0; i < length; i++) {
+    const length = words.length;
+    for (let i = 0; i < length; i++) {
         ngrams[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
     }
     return ngrams;
@@ -56,7 +56,7 @@ function sortMap(freqMap, type, stopWords) {
     items.sort(function (first, second) {
         return second[1] - first[1];
     });
-    let length = items.length;
+    const length = items.length;
     for (let i = 0; i < length; i++) {
         let row = `<td>${items[i][0]}</td><td>${(type != "ngram") ?
             items[i][1] :
@@ -64,7 +64,7 @@ function sortMap(freqMap, type, stopWords) {
             }</td></tr>`;
 
         let gray = 0;
-        let words = items[i][0].split(" ");
+        const words = items[i][0].split(" ");
         words.forEach((word) => {
             gray += stopWords.includes(word.toLowerCase()) ? 1 : 0;
         });
@@ -82,7 +82,7 @@ function sortMap(freqMap, type, stopWords) {
 
 function wordSplit(text) {
     text = text.toLowerCase().split(/\P{L}+/u);
-    let length = text.length;
+    const length = text.length;
     for (let i = 0; i < length; i++) {
         if (["s", "t", "d", "m", "ve", "ll", "re", "ch", ""].includes(text[i])) {
             text.splice(i, 1);
@@ -95,14 +95,14 @@ function wordSplit(text) {
 function syllables(word) {
     word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
     word = word.replace(/^y/, '');
-    let sylArray = word.match(/[aeiouy]{1,2}/g);
+    const sylArray = word.match(/[aeiouy]{1,2}/g);
     return sylArray ? sylArray.length : 1;
 }
 
 function statsCalc(words, text, stopWords) {
     let stats = {};
-    let sentNum = (text.match(/\.+|\?+|\!+|\S(\s*\n|$)/g) || []).length;
-    let wordNum = words.length;
+    const sentNum = (text.match(/\.+|\?+|\!+|\S(\s*\n|$)/g) || []).length;
+    const wordNum = words.length;
     let charNum = 0;
     let lexNum = 0;
     let sylNum = 0;
@@ -110,23 +110,23 @@ function statsCalc(words, text, stopWords) {
     for (let i = 0; i < wordNum; i++) {
         charNum += words[i].length;
         lexNum += stopWords.includes(words[i]) ? 0 : 1;
-        syl = syllables(words[i]);
+        const syl = syllables(words[i]);
         if (syl > 2) {
             polySylNum++;
         }
         sylNum += syl;
     }
-    stats["sentNum"] = sentNum;
-    stats["wordNum"] = wordNum;
-    stats["charNum"] = charNum;
-    stats["lexNum"] = lexNum;
-    stats["sylNum"] = sylNum;
-    stats["polySylNum"] = polySylNum;
+    stats.sentNum = sentNum;
+    stats.wordNum = wordNum;
+    stats.charNum = charNum;
+    stats.lexNum = lexNum;
+    stat.sylNum = sylNum;
+    stats.polySylNum = polySylNum;
     return stats;
 }
 
 self.addEventListener("message", function (e) {
-    let [words, size, type] = JSON.parse(e.data);
+    const [words, size, type] = JSON.parse(e.data);
     console.time(`${type} processing`);
     let freqMap = {};
     if (type == "phrase") {

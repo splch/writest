@@ -1,14 +1,14 @@
 let words = [];
 let stats = {};
-let clusterize = { "phrase" : null, "window" : null, "ngram" : null };
+let clusterize = { "phrase": null, "window": null, "ngram": null };
 
 async function searchGram(list) {
     let query = "";
     list.forEach((word) => {
-        query += word.replaceAll(" ", "+") + "%2C"
+        query += word.replaceAll(" ", "+") + "%2C";
     });
     let xhr = new XMLHttpRequest();
-    let year = 2019;
+    const year = 2019;
     let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) +
         "&year_start=" + (year - 1) + "&year_end=" + year + "&corpus=26&smoothing=0&case_insensitive=on";
     xhr.open("GET", url);
@@ -18,7 +18,7 @@ async function searchGram(list) {
             ngramWorker.addEventListener("message", function (e) {
                 displayArray(e.data[0], "ngram");
                 document.querySelectorAll(".hideTable").forEach((table) => {
-                    table.classList.remove("hideTable")
+                    table.classList.remove("hideTable");
                 });
             });
             ngramWorker.postMessage(JSON.stringify(
@@ -50,27 +50,27 @@ async function displayArray(array, id) {
 }
 
 function read(index) {
-    let gl
+    let gl;
     if (index == "fk") {
-        gl = 0.39 * (stats["wordNum"] / stats["sentNum"]) + 11.8 * (stats["sylNum"] / stats["wordNum"]) - 15.59;
+        gl = 0.39 * (stat.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
         gl = gl < 0 ? 0 : gl;
     }
     else if (index == "fog") {
-        gl = 0.4 * (stats["wordNum"] / stats["sentNum"] + stats["polySylNum"] / stats["wordNum"]);
+        gl = 0.4 * (stats.wordNum / stats.sentNum + stats.polySylNum / stats.wordNum);
     }
     else if (index == "smog") {
-        gl = 1.043 * Math.sqrt(stats["polySylNum"] * 30 / stats["sentNum"]) + 3.1291;
+        gl = 1.043 * Math.sqrt(stats.polySylNum * 30 / stats.sentNum) + 3.1291;
     }
     else if (index == "cl") {
-        gl = 0.0588 * (100 * stats["charNum"] / stats["wordNum"]) - 0.296 * (100 * stats["sentNum"] / stats["wordNum"]) - 15.8;
+        gl = 0.0588 * (100 * stats.charNum / stats.wordNum) - 0.296 * (100 * stats.sentNum / stats.wordNum) - 15.8;
         gl = gl < 0 ? 0 : gl;
     }
     else if (index == "ari") {
-        gl = 0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01;
+        gl = 0.37 * (stats.wordNum / stats.sentNum) + 5.84 * (stats.charNum / stats.wordNum) - 26.01;
         gl = gl < 0 ? 0 : gl;
     }
     // else if (index == "lin") {
-    //     gl = (stats["wordNum"] + 2 * stats["polySylNum"]) / stats["sentNum"];
+    //     gl = (stats.wordNum + 2 * stats.polySylNum) / stats.sentNum;
     //     gl = gl > 20 ? gl / 2 : gl / 2 - 1;
     // }
     else {
@@ -83,23 +83,23 @@ function read(index) {
 }
 
 async function displayStats() {
-    document.getElementById("charNum").innerText = stats["charNum"].toLocaleString("en-US");
-    document.getElementById("wordNum").innerText = stats["wordNum"].toLocaleString("en-US");
-    document.getElementById("sentNum").innerText = stats["sentNum"].toLocaleString("en-US");
+    document.getElementById("charNum").innerText = stats.charNum.toLocaleString("en-US");
+    document.getElementById("wordNum").innerText = stats.wordNum.toLocaleString("en-US");
+    document.getElementById("sentNum").innerText = stats.sentNum.toLocaleString("en-US");
 
-    let avgWord = stats["wordNum"] / stats["sentNum"];
+    const avgWord = stats.wordNum / stats.sentNum;
     document.getElementById("avgWord").innerText = avgWord.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
     document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
 
-    let avgChar = stats["charNum"] / stats["wordNum"];
+    const avgChar = stats.charNum / stats.wordNum;
     document.getElementById("avgChar").innerText = avgChar.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
     document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
 
-    let lexDen = stats["lexNum"] / stats["wordNum"];
+    const lexDen = stats.lexNum / stats.wordNum;
     document.getElementById("lexDen").innerText = lexDen.toLocaleString("en-US", {
         style: "percent"
     });
@@ -147,7 +147,7 @@ async function calcWords(text) {
     document.getElementById("text").value = text;
     let wordWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
     wordWorker.addEventListener("message", function (e) {
-        words = e.data[0]["words"];
+        words = e.data[0].words;
         populate(text, words);
     });
     wordWorker.postMessage(JSON.stringify(
@@ -157,7 +157,7 @@ async function calcWords(text) {
 
 async function getText() {
     let hostCodes = {
-        "docs.google.com" : "https://docs.google.com/document/export?format=txt&id=",
+        "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
 
         // "writer.zoho.com" : [document.getElementById("ui-editor-outer-div"), true],
         // https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
@@ -174,7 +174,7 @@ async function getText() {
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 chrome.runtime.sendMessage(
-                    { "text" : xhr.responseText }
+                    { "text": xhr.responseText }
                 );
             }
         };
@@ -187,9 +187,9 @@ async function getText() {
         xhr.send();
     }
     else {
-        setTimeout(function() {
+        setTimeout(function () {
             chrome.runtime.sendMessage(
-                { "text" : document.body.innerText }
+                { "text": document.body.innerText }
             );
         }, 0); // timeout for chrome listener
     }
@@ -207,7 +207,7 @@ function callText() {
             }, () => {
                 chrome.runtime.onMessage.addListener(function listener(result) {
                     chrome.runtime.onMessage.removeListener(listener);
-                    calcWords(result["text"]);
+                    calcWords(result.text);
                 });
             });
         });

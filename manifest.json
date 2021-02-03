@@ -1,7 +1,7 @@
 {
     "name": "Writest",
     "description": "Brings you from being a writer to the writest.",
-    "version": "0.8",
+    "version": "0.9",
     "manifest_version": 3,
     "permissions": [
         "activeTab",

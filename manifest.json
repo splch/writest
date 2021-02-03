@@ -1,14 +1,14 @@
 {
     "name": "Writest",
     "description": "Brings you from being a writer to the writest.",
-    "version": "0.7",
+    "version": "0.8",
     "manifest_version": 3,
     "permissions": [
         "activeTab",
         "scripting"
     ],
     "host_permissions": [
-        "https://books.google.com/ngrams/json"
+        "https://books.google.com/ngrams/json/"
     ],
     "action": {
         "default_popup": "popup.html",

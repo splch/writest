@@ -10,16 +10,21 @@
         html {
             width: 300px;
             background: repeating-linear-gradient(22deg, #ffffff, #cccccc 1px);
+            overflow: overlay;
         }
 
         body {
             background: #ffffff;
         }
 
+        h2 {
+            margin: 0px;
+            text-align: center;
+        }
+
         textarea {
-            height: 114px;
+            height: 122px;
             width: 278px;
-            overflow: auto;
         }
 
         summary,
@@ -50,28 +55,22 @@
         }
 
         .clusterize-scroll {
-            max-height: 300px;
+            max-height: 250px;
             width: max-content;
             overflow: auto;
         }
 
         .clusterize-table {
-            width: 269px;
+            width: 263px;
         }
 
         .clusterize-content {
             width: 200px;
-            outline: 0;
+            outline: 0px;
         }
 
         .hideTable {
             display: none;
-        }
-
-        #analyze {
-            display: block;
-            margin: auto;
-            padding: 5px;
         }
     </style>
     <script src="scripts/clusterize.js" async></script>
@@ -79,7 +78,7 @@
 </head>
 
 <body>
-    <input id="analyze" type="button" value="Analyze Webpage">
+    <h2>Writest</h2>
 
     <hr>
 
@@ -99,7 +98,7 @@
             </thead>
             <tr>
                 <td>Characters</td>
-                <td id="charNum"></td>
+                <td id="charNum" title="excludes spaces"></td>
             </tr>
             <tr>
                 <td>Words</td>
@@ -147,13 +146,13 @@
     <details>
         <summary>Additional features</summary>
 
-        <small>Ngram search: </small>
+        <small>N-gram search: </small>
         <input id="ngramQuery" type="search" data-tip="Same as Ngram search">
         <input id="ngramSearch" type="button" value="&#x1f50d;">
         <div class="clusterize">
             <table class="clusterize-table hideTable">
                 <thead>
-                    <th>Ngram</th>
+                    <th>N-gram</th>
                     <th>Frequency</th>
                 </thead>
             </table>

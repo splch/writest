@@ -1,6 +1,6 @@
 let words = [];
 let stats = {};
-let clusterize = { "phrase": null, "window": null, "ngram": null };
+let clusterize = { "phrase" : null, "window" : null, "ngram" : null };
 
 async function searchGram(list) {
     let query = "";
@@ -75,28 +75,36 @@ function read(index) {
     // }
     else {
         console.time("avg readability");
-        gl = Math.round(10 * (
-            2 * read("fk") + 1.8 * read("fog") + 1.75 * read("smog") + 1.25 * read("cl") + 1 * read("ari")
-        ) / (2 + 1.8 + 1.75 + 1.25 + 1)) / 10;
+        gl = (2 * read("fk") + 1.8 * read("fog") + 1.75 * read("smog") + 1.25 * read("cl") + 1 * read("ari")) / (2 + 1.8 + 1.75 + 1.25 + 1);
         console.timeEnd("avg readability");
-        return gl;
     }
-    return Math.round(gl);
+    document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00ff9966" : "#ff999966";
+    return Math.round(10 * gl) / 10;
 }
 
 async function displayStats() {
     document.getElementById("charNum").innerText = stats["charNum"].toLocaleString("en-US");
     document.getElementById("wordNum").innerText = stats["wordNum"].toLocaleString("en-US");
     document.getElementById("sentNum").innerText = stats["sentNum"].toLocaleString("en-US");
-    document.getElementById("avgWord").innerText = (stats["wordNum"] / stats["sentNum"]).toLocaleString("en-US", {
+
+    let avgWord = stats["wordNum"] / stats["sentNum"];
+    document.getElementById("avgWord").innerText = avgWord.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgChar").innerText = (stats["charNum"] / stats["wordNum"]).toLocaleString("en-US", {
+    document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00ff9966" : "#ff999966";
+
+    let avgChar = stats["charNum"] / stats["wordNum"];
+    document.getElementById("avgChar").innerText = avgChar.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("lexDen").innerText = (stats["lexNum"] / stats["wordNum"]).toLocaleString("en-US", {
+    document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00ff9966" : "#ff999966";
+
+    let lexDen = stats["lexNum"] / stats["wordNum"];
+    document.getElementById("lexDen").innerText = lexDen.toLocaleString("en-US", {
         style: "percent"
     });
+    document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00ff9966" : "#ff999966";
+
     document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
@@ -149,9 +157,9 @@ async function calcWords(text) {
 
 async function getText() {
     let hostCodes = {
-        "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
+        "docs.google.com" : "https://docs.google.com/document/export?format=txt&id=",
 
-        // "writer.zoho.com": [document.getElementById("ui-editor-outer-div"), true],
+        // "writer.zoho.com" : [document.getElementById("ui-editor-outer-div"), true],
         // https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
     };
 
@@ -166,7 +174,7 @@ async function getText() {
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 chrome.runtime.sendMessage(
-                    xhr.responseText
+                    { "text" : xhr.responseText }
                 );
             }
         };
@@ -179,13 +187,15 @@ async function getText() {
         xhr.send();
     }
     else {
-        chrome.runtime.sendMessage(
-            document.body.innerText
-        );
+        setTimeout(function() {
+            chrome.runtime.sendMessage(
+                { "text" : document.body.innerText }
+            );
+        }, 0); // timeout for chrome listener
     }
 }
 
-document.getElementById("analyze").addEventListener("click", () => {
+function callText() {
     if (document.getElementById("text").custom) {
         calcWords(document.getElementById("text").value);
     }
@@ -195,22 +205,19 @@ document.getElementById("analyze").addEventListener("click", () => {
                 target: { tabId: tab[0].id },
                 function: getText,
             }, () => {
-                new Promise(resolve => {
-                    chrome.runtime.onMessage.addListener(function listener(result) {
-                        chrome.runtime.onMessage.removeListener(listener);
-                        resolve(result);
-                    });
-                }).then(result => {
-                    calcWords(result);
+                chrome.runtime.onMessage.addListener(function listener(result) {
+                    chrome.runtime.onMessage.removeListener(listener);
+                    calcWords(result["text"]);
                 });
             });
         });
     }
-});
+}
 
 document.getElementById("text").addEventListener("change", () => {
     document.getElementById("text").custom = true;
     document.getElementById("analyze").value = "Analyze Textarea";
+    callText();
 });
 
 document.getElementById("selectIndex").addEventListener("change", () => {
@@ -260,4 +267,4 @@ document.querySelectorAll("details > details").forEach(details => {
     });
 });
 
-document.getElementById("analyze").click();
+callText();

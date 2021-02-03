@@ -66,7 +66,7 @@ function read(index) {
         gl = gl < 0 ? 0 : gl;
     }
     else if (index == "ari") {
-        gl = Math.ceil(0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01);
+        gl = 0.37 * (stats["wordNum"] / stats["sentNum"]) + 5.84 * (stats["charNum"] / stats["wordNum"]) - 26.01;
         gl = gl < 0 ? 0 : gl;
     }
     // else if (index == "lin") {
@@ -78,7 +78,7 @@ function read(index) {
         gl = (2 * read("fk") + 1.8 * read("fog") + 1.75 * read("smog") + 1.25 * read("cl") + 1 * read("ari")) / (2 + 1.8 + 1.75 + 1.25 + 1);
         console.timeEnd("avg readability");
     }
-    document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00ff9966" : "#ff999966";
+    document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00cc0066" : "#ff000066";
     return Math.round(10 * gl) / 10;
 }
 
@@ -91,19 +91,19 @@ async function displayStats() {
     document.getElementById("avgWord").innerText = avgWord.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00ff9966" : "#ff999966";
+    document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
 
     let avgChar = stats["charNum"] / stats["wordNum"];
     document.getElementById("avgChar").innerText = avgChar.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00ff9966" : "#ff999966";
+    document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
 
     let lexDen = stats["lexNum"] / stats["wordNum"];
     document.getElementById("lexDen").innerText = lexDen.toLocaleString("en-US", {
         style: "percent"
     });
-    document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00ff9966" : "#ff999966";
+    document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00cc0066" : "#ff000066";
 
     document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
@@ -181,7 +181,7 @@ async function getText() {
         xhr.timeout = 5e3;
         xhr.ontimeout = function () {
             chrome.runtime.sendMessage(
-                "Text request failed.\n\nThese tips may help:\n\t1. Make sure your main Google account is accessing the document.\n\t2. Copy your text in here, and press the Analyze Textarea button.\n\t3. Reload the extension and try again."
+                "Text request failed.\n\nThese tips may help:\n\t1. Make sure your main Google account is accessing the document.\n\t2. Copy your text in here, and click outside of the textarea.\n\t3. Reload the extension and try again."
             );
         }
         xhr.send();
@@ -216,7 +216,6 @@ function callText() {
 
 document.getElementById("text").addEventListener("change", () => {
     document.getElementById("text").custom = true;
-    document.getElementById("analyze").value = "Analyze Textarea";
     callText();
 });
 

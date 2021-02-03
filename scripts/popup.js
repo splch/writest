@@ -214,7 +214,7 @@ function callText() {
     }
 }
 
-document.getElementById("text").addEventListener("change", () => {
+document.getElementById("text").addEventListener("keyup", () => {
     document.getElementById("text").custom = true;
     callText();
 });

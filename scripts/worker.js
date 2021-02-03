@@ -120,7 +120,7 @@ function statsCalc(words, text, stopWords) {
     stats.wordNum = wordNum;
     stats.charNum = charNum;
     stats.lexNum = lexNum;
-    stat.sylNum = sylNum;
+    stats.sylNum = sylNum;
     stats.polySylNum = polySylNum;
     return stats;
 }

@@ -52,7 +52,7 @@ async function displayArray(array, id) {
 function read(index) {
     let gl;
     if (index == "fk") {
-        gl = 0.39 * (stat.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
+        gl = 0.39 * (stats.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
         gl = gl < 0 ? 0 : gl;
     }
     else if (index == "fog") {

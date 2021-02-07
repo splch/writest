@@ -229,9 +229,9 @@ document.getElementById("selectIndex").addEventListener("change", () => {
 });
 
 document.getElementById("ngramSearch").addEventListener("click", () => {
-    let data = document.getElementById("ngramQuery").value;
+    let data = document.getElementById("ngramQuery").value.replaceAll(/,{2,}/g, ",").split(/\s*,\s*/);
     if (data) {
-        searchGram(data.replaceAll(/,{2,}/g, ",").split(/\s*,\s*/));
+        searchGram(data);
     }
 });
 

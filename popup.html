@@ -24,7 +24,9 @@
 
         textarea {
             height: 122px;
-            width: 271px;
+            min-width: 271px;
+            max-width: 271px;
+            content-visibility: auto;
         }
 
         summary,
@@ -58,6 +60,7 @@
             max-height: 250px;
             width: max-content;
             overflow: auto;
+            content-visibility: auto;
         }
 
         .clusterize-table {
@@ -128,6 +131,7 @@
                 <td>
                     <select id="selectIndex">
                         <option value="avg">Average Readability</option>
+                        <!-- <option value="splch">Splch Index</option> -->
                         <option value="fk">Flesch–Kincaid Grade Level</option>
                         <option value="fog">Gunning Fog Index</option>
                         <option value="smog">SMOG Index</option>

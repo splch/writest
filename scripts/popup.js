@@ -51,6 +51,9 @@ async function displayArray(array, id) {
 
 function read(index) {
     let gl;
+    // if (index == "splch") {
+    //     gl = -1.7760706896110616 * (stats.charNum / stats.wordNum) - 0.00010044755744618449 * (stats.wordNum / stats.sentNum) + 1.15 * (stats.sylNum / stats.wordNum) + 12.004162847082352;
+    // }
     if (index == "fk") {
         gl = 0.39 * (stats.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
         gl = gl < 0 ? 0 : gl;

@@ -1,15 +1,8 @@
 {
-    "name": "Writest",
-    "description": "Brings you from a writer to the writest.",
-    "version": "1.0",
     "manifest_version": 3,
-    "permissions": [
-        "activeTab",
-        "scripting"
-    ],
-    "host_permissions": [
-        "https://books.google.com/ngrams/json/"
-    ],
+    "name": "Writest",
+    "version": "1.1",
+
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
@@ -19,10 +12,23 @@
             "128": "images/icon128.png"
         }
     },
+    "description": "Brings you from a writer to the writest.",
     "icons": {
         "16": "images/icon16.png",
         "32": "images/icon32.png",
         "48": "images/icon48.png",
         "128": "images/icon128.png"
-    }
+    },
+
+    "author": "Spencer Churchill",
+    "homepage_url": "https://github.com/splch/writest/",
+    "minimum_chrome_version": "88",
+    "offline_enabled": true,
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://books.google.com/ngrams/json/"
+    ]
 }

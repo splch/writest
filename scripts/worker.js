@@ -71,10 +71,10 @@ function sortMap(freqMap, type, stopWords) {
         // items[i] = `<tr style="color: #000000${ Math.round(255 - 255/2 * gray/words.length).toString(16) }">` + row;
         // items[i] = `<tr style="background: #CCCCCC${ Math.round(255 * gray/words.length).toString(16) }">` + row;
         if (gray == words.length) {
-            items[i] = '<tr style="background: #CCCCCC">' + row;
+            items[i] = `<tr style="background: #CCCCCC">` + row;
         }
         else {
-            items[i] = "<tr>" + row;
+            items[i] = `<tr>` + row;
         }
     }
     return items;
@@ -93,8 +93,8 @@ function wordSplit(text) {
 }
 
 function syllables(word) {
-    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-    word = word.replace(/^y/, '');
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, "");
+    word = word.replace(/^y/, "");
     const sylArray = word.match(/[aeiouy]{1,2}/g);
     return sylArray ? sylArray.length : 1;
 }

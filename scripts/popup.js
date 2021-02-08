@@ -198,7 +198,7 @@ async function getText() {
     }
 }
 
-function callText() {
+async function callText() {
     if (document.getElementById("text").custom) {
         calcWords(document.getElementById("text").value);
     }

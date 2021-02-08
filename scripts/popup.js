@@ -159,7 +159,7 @@ async function calcWords(text) {
 }
 
 async function getText() {
-    let hostCodes = {
+    const hostCodes = {
         "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
 
         // "writer.zoho.com" : [document.getElementById("ui-editor-outer-div"), true],
@@ -229,7 +229,7 @@ document.getElementById("selectIndex").addEventListener("change", () => {
 });
 
 document.getElementById("ngramSearch").addEventListener("click", () => {
-    let data = document.getElementById("ngramQuery").value.replaceAll(/,{2,}/g, ",").split(/\s*,\s*/);
+    const data = document.getElementById("ngramQuery").value.replaceAll(/,{2,}/g, ",").split(/\s*,\s*/);
     if (data) {
         searchGram(data);
     }

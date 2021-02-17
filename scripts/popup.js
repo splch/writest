@@ -13,6 +13,7 @@ async function searchGram(list) {
         "&year_start=" + (year - 1) + "&year_end=" + year + "&corpus=26&smoothing=0&case_insensitive=on";
     xhr.open("GET", url);
     xhr.onreadystatechange = function () {
+        // fix empty table bug
         if (this.readyState == 4 && this.status == 200) {
             let ngramWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
             ngramWorker.addEventListener("message", function (e) {

@@ -6,7 +6,7 @@ async function scrollRefresh() {
     document.getElementsByTagName("html")[0].style.overflow = "auto";
     setTimeout(() => {
         document.getElementsByTagName("html")[0].style.overflow = "overlay";
-    }, 20);
+    }, 17);
 }
 
 async function searchGram(list) {

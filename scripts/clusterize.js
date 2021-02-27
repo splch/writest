@@ -13,13 +13,13 @@
   // detect ie9 and lower
   // https://gist.github.com/padolsey/527683#comment-786682
   var ie = (function () {
-      for (
-        var v = 3, el = document.createElement("b"), all = el.all || [];
-        (el.innerHTML = "<!--[if gt IE " + ++v + "]><i><![endif]-->"), all[0];
+    for (
+      var v = 3, el = document.createElement("b"), all = el.all || [];
+      (el.innerHTML = "<!--[if gt IE " + ++v + "]><i><![endif]-->"), all[0];
 
-      ) {}
-      return v > 4 ? v : document.documentMode;
-    })(),
+    ) { }
+    return v > 4 ? v : document.documentMode;
+  })(),
     is_mac = navigator.platform.toLowerCase().indexOf("mac") + 1;
   var Clusterize = function (data) {
     if (!(this instanceof Clusterize)) return new Clusterize(data);
@@ -137,7 +137,7 @@
     self.getScrollProgress = function () {
       return (
         (this.options.scroll_top / (rows.length * this.options.item_height)) *
-          100 || 0
+        100 || 0
       );
     };
 
@@ -212,7 +212,7 @@
       return (
         Math.floor(
           this.options.scroll_top /
-            (this.options.cluster_height - this.options.block_height)
+          (this.options.cluster_height - this.options.block_height)
         ) || 0
       );
     },
@@ -246,9 +246,9 @@
         };
       }
       var items_start = Math.max(
-          (opts.rows_in_cluster - opts.rows_in_block) * cluster_num,
-          0
-        ),
+        (opts.rows_in_cluster - opts.rows_in_block) * cluster_num,
+        0
+      ),
         items_end = items_start + opts.rows_in_cluster,
         top_offset = Math.max(items_start * opts.item_height, 0),
         bottom_offset = Math.max((rows_len - items_end) * opts.item_height, 0),

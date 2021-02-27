@@ -2,11 +2,11 @@ let words = [];
 let stats = {};
 let clusterize = { "phrase": null, "window": null, "ngram": null };
 
-async function scrollRefresh() {
-    document.getElementsByTagName("html")[0].style.overflow = "auto";
-    setTimeout(() => {
-        document.getElementsByTagName("html")[0].style.overflow = "overlay";
-    }, 17);
+async function scrollRefresh(element) {
+    element.style.overflow = "auto";
+    requestAnimationFrame(() => {
+        element.style.overflow = "overlay";
+    });
 }
 
 async function searchGram(list) {
@@ -274,7 +274,7 @@ document.getElementById("windowSize").addEventListener("change", () => {
 document.querySelectorAll("details").forEach(details => {
     details.addEventListener("toggle", event => {
         event.target.scrollIntoView();
-        scrollRefresh();
+        scrollRefresh(document.getElementsByTagName("html")[0]);
     });
 });
 

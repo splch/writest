@@ -25,9 +25,7 @@ async function searchGram(list) {
             let ngramWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
             ngramWorker.addEventListener("message", function (e) {
                 displayArray(e.data[0], "ngram");
-                document.querySelectorAll(".hideTable").forEach((table) => {
-                    table.classList.remove("hideTable");
-                });
+                document.getElementById("ngramTable").style.display = "initial";
             });
             ngramWorker.postMessage(JSON.stringify(
                 [JSON.parse(xhr.responseText), 0, "ngram"]
@@ -236,10 +234,13 @@ document.getElementById("selectIndex").addEventListener("change", () => {
     }
 });
 
-document.getElementById("ngramSearch").addEventListener("click", () => {
-    const data = document.getElementById("ngramQuery").value.replaceAll(/,{2,}/g, ",").split(/\s*,\s*/);
+document.getElementById("ngramQuery").addEventListener("change", () => {
+    const data = document.getElementById("ngramQuery").value.replaceAll(/,{2,}/g, ",");
     if (data) {
-        searchGram(data);
+        searchGram(data.split(/\s*,\s*/));
+    }
+    else {
+        document.getElementById("ngramTable").style.display = "none";
     }
 });
 

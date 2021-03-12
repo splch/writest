@@ -9,7 +9,6 @@
       html {
         width: 300px;
         background: repeating-linear-gradient(22deg, #ffffff, #cccccc 1px);
-        overflow: auto;
       }
 
       body {
@@ -28,10 +27,15 @@
         content-visibility: auto;
       }
 
+      h2,
       summary,
       small {
         outline: none;
         user-select: none;
+      }
+
+      #ngramTable {
+        display: none;
       }
 
       table,
@@ -68,10 +72,6 @@
       .clusterize-content {
         width: 200px;
         outline: 0px;
-      }
-
-      .hideTable {
-        display: none;
       }
     </style>
     <script src="scripts/clusterize.js" async></script>
@@ -152,11 +152,14 @@
     <details>
       <summary>Additional features</summary>
 
-      <small>N-gram search: </small>
-      <input id="ngramQuery" type="search" data-tip="Same as Ngram search" />
-      <input id="ngramSearch" type="button" value="&#x1f50d;" />
-      <div class="clusterize">
-        <table class="clusterize-table hideTable">
+      <input
+        id="ngramQuery"
+        type="search"
+        data-tip="Same as Ngram search"
+        placeholder="&#x1f50d;  N-gram Search"
+      />
+      <div id="ngramTable" class="clusterize">
+        <table class="clusterize-table">
           <thead>
             <tr>
               <th>N-gram</th>
@@ -165,7 +168,7 @@
           </thead>
         </table>
         <div id="ngramScroll" class="clusterize-scroll">
-          <table class="clusterize-table hideTable">
+          <table class="clusterize-table">
             <tbody id="ngramContent" class="clusterize-content"></tbody>
           </table>
         </div>

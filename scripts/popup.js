@@ -205,7 +205,7 @@ async function getText() {
 }
 
 async function callText() {
-    if (document.getElementById("text").custom) {
+    if (document.getElementById("text").custom || document.location.protocol != "chrome-extension:") {
         calcWords(document.getElementById("text").value);
     }
     else {

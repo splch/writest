@@ -22,7 +22,7 @@ async function searchGram(list) {
     xhr.onreadystatechange = function () {
         // fix empty table bug
         if (this.readyState == 4 && this.status == 200) {
-            let ngramWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+            let ngramWorker = new Worker("scripts/worker.js");
             ngramWorker.addEventListener("message", function (e) {
                 displayArray(e.data[0], "ngram");
                 document.getElementById("ngramTable").style.display = "initial";
@@ -118,7 +118,7 @@ async function displayStats() {
 }
 
 async function calculateStats(text, words) {
-    let statWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+    let statWorker = new Worker("scripts/worker.js");
     statWorker.addEventListener("message", function (e) {
         stats = e.data[0];
         displayStats();
@@ -131,8 +131,8 @@ async function calculateStats(text, words) {
 async function populate(text, words) {
     calculateStats(text, words);
 
-    let phraseWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
-    let windowWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+    let phraseWorker = new Worker("scripts/worker.js");
+    let windowWorker = new Worker("scripts/worker.js");
 
     phraseWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
@@ -154,7 +154,7 @@ async function populate(text, words) {
 
 async function calcWords(text) {
     document.getElementById("text").value = text;
-    let wordWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+    let wordWorker = new Worker("scripts/worker.js");
     wordWorker.addEventListener("message", function (e) {
         words = e.data[0].words;
         populate(text, words);
@@ -246,7 +246,7 @@ document.getElementById("ngramQuery").addEventListener("change", () => {
 
 document.getElementById("phraseSize").addEventListener("change", () => {
     if (words) {
-        let phraseWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+        let phraseWorker = new Worker("scripts/worker.js");
         phraseWorker.addEventListener("message", function (e) {
             if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
                 displayArray(e.data[0], "phrase");
@@ -260,7 +260,7 @@ document.getElementById("phraseSize").addEventListener("change", () => {
 
 document.getElementById("windowSize").addEventListener("change", () => {
     if (words) {
-        let windowWorker = new Worker(chrome.runtime.getURL("scripts/worker.js"));
+        let windowWorker = new Worker("scripts/worker.js");
         windowWorker.addEventListener("message", function (e) {
             if (e.data[1] == parseInt(document.getElementById("windowSize").value)) {
                 displayArray(e.data[0], "window");

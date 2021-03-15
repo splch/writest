@@ -2,8 +2,8 @@ const stopWords = ["a", "about", "above", "across", "after", "again", "against",
 
 function phraseSort(words, size) {
   let freqMap = {};
-  const length = words.length;
-  for (let i = size; i < length; i++) {
+  const loops = words.length + 1;
+  for (let i = size; i < loops; i++) {
     let phrase = "";
     for (let j = size; j > 0; j--) {
       phrase += words[i - j] + " ";

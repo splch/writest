@@ -19,8 +19,8 @@ function phraseSort(words, size) {
 
 function windowSort(words, size) {
   let freqMap = {};
-  const length = words.length;
-  for (let i = size; i < length; i += size - 1) {
+  const loops = words.length + 1;
+  for (let i = size; i < loops; i += size - 1) {
     let windowMap = {};
     for (let j = size; j > 0; j--) {
       if (!windowMap[words[i - j]]) {

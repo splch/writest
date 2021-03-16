@@ -11,9 +11,9 @@ async function scrollRefresh(element) {
 
 async function searchGram(list) {
     let query = "";
-    list.forEach((word) => {
-        query += word.replaceAll(" ", "+") + "%2C";
-    });
+    for (let i = 0; i < list.length; i++) {
+        query += list[i].replaceAll(" ", "+") + "%2C";
+    }
     let xhr = new XMLHttpRequest();
     const year = 2019;
     let url = "https://books.google.com/ngrams/json?content=" + query.slice(0, -3) +
@@ -167,8 +167,6 @@ async function calcWords(text) {
 async function getText() {
     const hostCodes = {
         "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
-
-        // "writer.zoho.com" : [document.getElementById("ui-editor-outer-div"), true],
         // https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
     };
 

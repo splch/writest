@@ -28,8 +28,8 @@ function windowSort(words, size) {
       }
       windowMap[words[i - j]]++;
     }
-    for (const [key, value] of Object.entries(windowMap)) {
-      if (value > 1) {
+    for (let key in windowMap) {
+      if (windowMap[key] > 1) {
         if (!freqMap[key]) {
           freqMap[key] = 0;
         }
@@ -53,8 +53,7 @@ function ngramSort(words) {
 function sortMap(freqMap, type, stopWords) {
   let items = Object.keys(freqMap).map(function (key) {
     return [key, freqMap[key]];
-  });
-  items.sort(function (first, second) {
+  }).sort(function (first, second) {
     return second[1] - first[1];
   });
   const length = items.length;
@@ -69,12 +68,13 @@ function sortMap(freqMap, type, stopWords) {
 
     let gray = 0;
     const words = items[i][0].split(" ");
-    words.forEach((word) => {
-      gray += stopWords.includes(word.toLowerCase()) ? 1 : 0;
-    });
-    // items[i] = `<tr style="color: #000000${ Math.round(255 - 255/2 * gray/words.length).toString(16) }">` + row;
-    // items[i] = `<tr style="background: #CCCCCC${ Math.round(255 * gray/words.length).toString(16) }">` + row;
-    if (gray == words.length) {
+    const wordsLength = words.length;
+    for (let i = 0; i < wordsLength; i++) {
+      gray += stopWords.includes(words[i].toLowerCase()) ? 1 : 0;
+    }
+    // items[i] = `<tr style="color: #000000${ Math.round(255 - 255/2 * gray / wordsLength).toString(16) }">` + row;
+    // items[i] = `<tr style="background: #CCCCCC${ Math.round(255 * gray / wordsLength).toString(16) }">` + row;
+    if (gray == wordsLength) {
       items[i] = `<tr style="background: #CCCCCC">` + row;
     } else {
       items[i] = `<tr>` + row;

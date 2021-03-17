@@ -2,14 +2,14 @@ let words = [];
 let stats = {};
 let clusterize = { "phrase": null, "window": null, "ngram": null };
 
-async function scrollRefresh(element) {
+function scrollRefresh(element) {
     element.style.overflow = "auto";
     requestAnimationFrame(() => {
         element.style.overflow = "overlay";
     });
 }
 
-async function searchGram(list) {
+function searchGram(list) {
     let query = "";
     for (let i = 0; i < list.length; i++) {
         query += list[i].replaceAll(" ", "+") + "%2C";
@@ -35,7 +35,7 @@ async function searchGram(list) {
     xhr.send();
 }
 
-async function displayArray(array, id) {
+function displayArray(array, id) {
     if (clusterize[id]) {
         clusterize[id].update(array);
         document.getElementById(id + "Scroll").scrollTop = 0;
@@ -95,7 +95,7 @@ function read(index, round = true) {
     return gl;
 }
 
-async function displayStats() {
+function displayStats() {
     const avgWord = stats.wordNum / stats.sentNum;
     const avgChar = stats.charNum / stats.wordNum;
     const lexDen = stats.lexNum / stats.wordNum;
@@ -117,7 +117,7 @@ async function displayStats() {
     document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
-async function calculateStats(text, words) {
+function calculateStats(text, words) {
     let statWorker = new Worker("scripts/worker.js");
     statWorker.addEventListener("message", function (e) {
         stats = e.data[0];
@@ -128,7 +128,7 @@ async function calculateStats(text, words) {
     ));
 }
 
-async function populate(text, words) {
+function populate(text, words) {
     calculateStats(text, words);
     let phraseWorker = new Worker("scripts/worker.js");
     let windowWorker = new Worker("scripts/worker.js");
@@ -150,7 +150,7 @@ async function populate(text, words) {
     ));
 }
 
-async function calcWords(text) {
+function calcWords(text) {
     document.getElementById("text").value = text;
     let wordWorker = new Worker("scripts/worker.js");
     wordWorker.addEventListener("message", function (e) {
@@ -162,7 +162,7 @@ async function calcWords(text) {
     ));
 }
 
-async function getText() {
+function getText() {
     const hostCodes = {
         "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
         // https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
@@ -198,7 +198,7 @@ async function getText() {
     }
 }
 
-async function callText() {
+function callText() {
     if (document.getElementById("text").custom || document.location.protocol != "chrome-extension:") {
         calcWords(document.getElementById("text").value);
     }
@@ -273,4 +273,4 @@ document.querySelectorAll("details").forEach(details => {
     });
 });
 
-callText().catch(console.error);
+callText();

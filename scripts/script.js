@@ -92,29 +92,25 @@ function read(index) {
 }
 
 async function displayStats() {
+    const avgWord = stats.wordNum / stats.sentNum;
+    const avgChar = stats.charNum / stats.wordNum;
+    const lexDen = stats.lexNum / stats.wordNum;
     document.getElementById("charNum").innerText = stats.charNum.toLocaleString("en-US");
     document.getElementById("wordNum").innerText = stats.wordNum.toLocaleString("en-US");
     document.getElementById("sentNum").innerText = stats.sentNum.toLocaleString("en-US");
-
-    const avgWord = stats.wordNum / stats.sentNum;
     document.getElementById("avgWord").innerText = avgWord.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
-
-    const avgChar = stats.charNum / stats.wordNum;
     document.getElementById("avgChar").innerText = avgChar.toLocaleString("en-US", {
         maximumFractionDigits: 1
     });
-    document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
-
-    const lexDen = stats.lexNum / stats.wordNum;
     document.getElementById("lexDen").innerText = lexDen.toLocaleString("en-US", {
         style: "percent"
     });
-    document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00cc0066" : "#ff000066";
-
     document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
+    document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
+    document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
+    document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00cc0066" : "#ff000066";
 }
 
 async function calculateStats(text, words) {
@@ -130,10 +126,8 @@ async function calculateStats(text, words) {
 
 async function populate(text, words) {
     calculateStats(text, words);
-
     let phraseWorker = new Worker("scripts/worker.js");
     let windowWorker = new Worker("scripts/worker.js");
-
     phraseWorker.addEventListener("message", function (e) {
         if (e.data[1] == parseInt(document.getElementById("phraseSize").value)) {
             displayArray(e.data[0], "phrase");
@@ -169,13 +163,11 @@ async function getText() {
         "docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
         // https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
     };
-
     let url = hostCodes[document.location.hostname];
     if (url) {
         if (document.location.hostname == "docs.google.com") {
             url += document.location.href.split(/d\//)[1].split("/")[0];
         }
-
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.onreadystatechange = function () {

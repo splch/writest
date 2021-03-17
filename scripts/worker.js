@@ -131,23 +131,25 @@ self.addEventListener("message", function (e) {
   const [words, size, type] = JSON.parse(e.data);
   console.time(`${type} processing`);
   let freqMap = {};
-  if (type == "phrase") {
-    if (size > 0) {
-      freqMap = phraseSort(words, size);
-    }
-  } else if (type == "window") {
-    if (size > 1) {
-      freqMap = windowSort(words, size);
-    }
-  } else if (type == "ngram") {
-    freqMap = ngramSort(words);
-  } else if (type == "words") {
-    freqMap = wordSplit(size);
-  } else if (type == "stats") {
-    freqMap = statsCalc(words, size, stopWords);
-  }
-  if (type != "stats" && type != "words") {
-    freqMap = sortMap(freqMap, type, stopWords);
+  switch (type) {
+    case "phrase":
+      if (size > 0) {
+        freqMap = sortMap(phraseSort(words, size), type, stopWords)
+      }
+      break;
+    case "window":
+      if (size > 1) {
+        freqMap = sortMap(windowSort(words, size), type, stopWords)
+      }
+      break;
+    case "words":
+      freqMap = wordSplit(size);
+      break;
+    case "stats":
+      freqMap = statsCalc(words, size, stopWords);
+      break;
+    case "ngram":
+      freqMap = ngramSort(words);
   }
   console.timeEnd(`${type} processing`);
   self.postMessage([freqMap, size]);

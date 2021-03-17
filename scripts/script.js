@@ -55,40 +55,44 @@ async function displayArray(array, id) {
     }
 }
 
-function read(index) {
+function read(index, round = true) {
     let gl;
-    // if (index == "splch") {
-    //     gl = -1.7760706896110616 * (stats.charNum / stats.wordNum) - 0.00010044755744618449 * (stats.wordNum / stats.sentNum) + 1.15 * (stats.sylNum / stats.wordNum) + 12.004162847082352;
-    // }
-    if (index == "fk") {
-        gl = 0.39 * (stats.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
-        gl = gl < 0 ? 0 : gl;
+    switch (index) {
+        case "splch":
+            gl = -1.7760706896110616 * (stats.charNum / stats.wordNum) - 0.00010044755744618449 * (stats.wordNum / stats.sentNum) + 1.15 * (stats.sylNum / stats.wordNum) + 12.004162847082352;
+            break;
+        case "fk":
+            gl = 0.39 * (stats.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
+            gl = gl < 0 ? 0 : gl;
+            break;
+        case "fog":
+            gl = 0.4 * (stats.wordNum / stats.sentNum + stats.polySylNum / stats.wordNum);
+            break;
+        case "smog":
+            gl = 1.043 * Math.sqrt(stats.polySylNum * 30 / stats.sentNum) + 3.1291;
+            break;
+        case "cl":
+            gl = 0.0588 * (100 * stats.charNum / stats.wordNum) - 0.296 * (100 * stats.sentNum / stats.wordNum) - 15.8;
+            gl = gl < 0 ? 0 : gl;
+            break;
+        case "ari":
+            gl = 0.37 * (stats.wordNum / stats.sentNum) + 5.84 * (stats.charNum / stats.wordNum) - 26.01;
+            gl = gl < 0 ? 0 : gl;
+            break;
+        case "lin":
+            gl = (stats.wordNum + 2 * stats.polySylNum) / stats.sentNum;
+            gl = gl > 20 ? gl / 2 : gl / 2 - 1;
+            break;
+        default:
+            console.time("avg readability");
+            gl = (2 * read("fk", false) + 1.8 * read("fog", false) + 1.75 * read("smog", false) + 1.25 * read("cl", false) + 1 * read("ari", false)) / (2 + 1.8 + 1.75 + 1.25 + 1);
+            console.timeEnd("avg readability");
     }
-    else if (index == "fog") {
-        gl = 0.4 * (stats.wordNum / stats.sentNum + stats.polySylNum / stats.wordNum);
-    }
-    else if (index == "smog") {
-        gl = 1.043 * Math.sqrt(stats.polySylNum * 30 / stats.sentNum) + 3.1291;
-    }
-    else if (index == "cl") {
-        gl = 0.0588 * (100 * stats.charNum / stats.wordNum) - 0.296 * (100 * stats.sentNum / stats.wordNum) - 15.8;
-        gl = gl < 0 ? 0 : gl;
-    }
-    else if (index == "ari") {
-        gl = 0.37 * (stats.wordNum / stats.sentNum) + 5.84 * (stats.charNum / stats.wordNum) - 26.01;
-        gl = gl < 0 ? 0 : gl;
-    }
-    // else if (index == "lin") {
-    //     gl = (stats.wordNum + 2 * stats.polySylNum) / stats.sentNum;
-    //     gl = gl > 20 ? gl / 2 : gl / 2 - 1;
-    // }
-    else {
-        console.time("avg readability");
-        gl = (2 * read("fk") + 1.8 * read("fog") + 1.75 * read("smog") + 1.25 * read("cl") + 1 * read("ari")) / (2 + 1.8 + 1.75 + 1.25 + 1);
-        console.timeEnd("avg readability");
+    if (round) {
+        gl = Math.round(10 * gl) / 10;
     }
     document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00cc0066" : "#ff000066";
-    return Math.round(10 * gl) / 10;
+    return gl;
 }
 
 async function displayStats() {
@@ -107,10 +111,10 @@ async function displayStats() {
     document.getElementById("lexDen").innerText = lexDen.toLocaleString("en-US", {
         style: "percent"
     });
-    document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
     document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
     document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
     document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00cc0066" : "#ff000066";
+    document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
 async function calculateStats(text, words) {
@@ -269,4 +273,4 @@ document.querySelectorAll("details").forEach(details => {
     });
 });
 
-callText();
+callText().catch(console.error);

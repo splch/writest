@@ -58,6 +58,11 @@ function displayArray(array, id) {
 function read(index, round = true) {
     let gl;
     switch (index) {
+        case "avg":
+            console.time("avg readability");
+            gl = (2 * read("fk", false) + 1.8 * read("fog", false) + 1.75 * read("smog", false) + 1.25 * read("cl", false) + 1 * read("ari", false)) / (2 + 1.8 + 1.75 + 1.25 + 1);
+            console.timeEnd("avg readability");
+            break;
         case "splch":
             gl = -1.7760706896110616 * (stats.charNum / stats.wordNum) - 0.00010044755744618449 * (stats.wordNum / stats.sentNum) + 1.15 * (stats.sylNum / stats.wordNum) + 12.004162847082352;
             break;
@@ -82,11 +87,6 @@ function read(index, round = true) {
         case "lin":
             gl = (stats.wordNum + 2 * stats.polySylNum) / stats.sentNum;
             gl = gl > 20 ? gl / 2 : gl / 2 - 1;
-            break;
-        default:
-            console.time("avg readability");
-            gl = (2 * read("fk", false) + 1.8 * read("fog", false) + 1.75 * read("smog", false) + 1.25 * read("cl", false) + 1 * read("ari", false)) / (2 + 1.8 + 1.75 + 1.25 + 1);
-            console.timeEnd("avg readability");
     }
     if (round) {
         gl = Math.round(10 * gl) / 10;

@@ -21,12 +21,12 @@ function sortMap(freqMap, type, stopWords) {
     for (let i = 0; i < wordsLength; i++) {
       gray += stopWords.includes(words[i].toLowerCase()) ? 1 : 0;
     }
-    // items[i] = `<tr style="color: #000000${ Math.round(255 - 255/2 * gray / wordsLength).toString(16) }">` + row;
-    // items[i] = `<tr style="background: #CCCCCC${ Math.round(255 * gray / wordsLength).toString(16) }">` + row;
+    // items[i] = `<tr style="color: #000000${ Math.round(255 - 255/2 * gray / wordsLength).toString(16) }">${row}`;
+    // items[i] = `<tr style="background: #CCCCCC${ Math.round(255 * gray / wordsLength).toString(16) }">${row}`;
     if (gray == wordsLength) {
-      items[i] = `<tr style="background: #CCCCCC">` + row;
+      items[i] = `<tr style="background: #CCCCCC">${row}`;
     } else {
-      items[i] = `<tr>` + row;
+      items[i] = `<tr>${row}`;
     }
   }
   return items;

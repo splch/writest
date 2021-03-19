@@ -164,6 +164,6 @@ self.addEventListener("message", function (e) {
 	const duration = Math.round(1000 * performance.getEntriesByName(type)[0].duration) / 1000;
 	console.log(
 		`${type}: %c${duration} ms`,
-		duration > 100 / 6 ? "color: red;" : "color: green;"
+		`color: ${duration > 100 / 6 ? "red" : "green"};`,
 	);
 });

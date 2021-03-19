@@ -74,7 +74,7 @@ function read(index, round = true) {
 			const duration = Math.round(1000 * performance.getEntriesByName("avg")[0].duration) / 1000;
 			console.log(
 				`average readability: %c${duration} ms`,
-				duration > 100 / 6 ? "color: red;" : "color: green;"
+				`color: ${duration > 100 / 6 ? "red" : "green"};`,
 			);
 			break;
 		case "splch":

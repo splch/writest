@@ -33,10 +33,13 @@ function sortMap(freqMap, type, stopWords) {
 }
 
 function syllables(word) {
-	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, "");
-	word = word.replace(/^y/, "");
-	const sylArray = word.match(/[aeiouy]{1,2}/g);
-	return sylArray ? sylArray.length : 1;
+	return word.replace(
+		/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, ""
+	).replace(
+		/^y/, ""
+	).match(
+		/[aeiouy]{1,2}/g
+	)?.length || 1;
 }
 
 function statsCalc(words, text, stopWords) {
@@ -81,8 +84,7 @@ function ngramSort(words) {
 	const ngrams = {};
 	const length = words.length;
 	for (let i = 0; i < length; i++) {
-		ngrams[words[i].ngram] =
-			words[i].timeseries[words[i].timeseries.length - 1];
+		ngrams[words[i].ngram] = words[i].timeseries[words[i].timeseries.length - 1];
 	}
 	return ngrams;
 }

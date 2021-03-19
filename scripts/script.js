@@ -307,7 +307,7 @@ document.getElementById("windowSize").addEventListener("change", () => {
 document.querySelectorAll("details").forEach(details => {
 	details.addEventListener("toggle", event => {
 		event.target.scrollIntoView();
-		scrollRefresh(document.getElementsByTagName("html")[0]); // remove when chrome fixes bug
+		scrollRefresh(document.getElementsByTagName("html")[0]); // remove if chrome fixes bug
 	});
 });
 

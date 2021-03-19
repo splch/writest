@@ -1,34 +1,34 @@
 {
-  "manifest_version": 3,
-  "name": "Writest",
-  "version": "2.1",
-  
-  "action": {
-    "default_popup": "index.html",
-    "default_icon": {
-      "16": "images/icon16.png",
-      "32": "images/icon32.png",
-      "48": "images/icon48.png",
-      "128": "images/icon128.png"
-    }
-  },
-  "description": "Brings you from a writer to the writest.",
-  "icons": {
-    "16": "images/icon16.png",
-    "32": "images/icon32.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
-  },
-
-  "author": "Spencer Churchill",
-  "homepage_url": "https://github.com/splch/writest/",
-  "minimum_chrome_version": "88",
-  "offline_enabled": true,
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "https://books.google.com/ngrams/json/"
-  ]
+	"manifest_version": 3,
+	"name": "Writest",
+	"version": "2.2",
+	
+	"action": {
+		"default_popup": "index.html",
+		"default_icon": {
+			"16": "images/icon16.png",
+			"32": "images/icon32.png",
+			"48": "images/icon48.png",
+			"128": "images/icon128.png"
+		}
+	},
+	"description": "Brings you from a writer to the writest.",
+	"icons": {
+		"16": "images/icon16.png",
+		"32": "images/icon32.png",
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
+	},
+	
+	"author": "Spencer Churchill",
+	"homepage_url": "https://github.com/splch/writest/",
+	"minimum_chrome_version": "88",
+	"offline_enabled": true,
+	"permissions": [
+		"activeTab",
+		"scripting"
+	],
+	"host_permissions": [
+		"https://books.google.com/ngrams/json/"
+	]
 }

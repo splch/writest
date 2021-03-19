@@ -104,8 +104,8 @@ function read(index, round = true) {
 	}
 	if (round) {
 		gl = Math.round(10 * gl) / 10;
+		document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00cc0066" : "#ff000066";
 	}
-	document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00cc0066" : "#ff000066";
 	return gl;
 }
 

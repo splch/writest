@@ -154,18 +154,18 @@ self.addEventListener("message", function (e) {
 			freqMap = sortMap(ngramSort(words), type, stopWords);
 	}
 	performance.mark("end");
+	self.postMessage({
+		freqMap,
+		size
+	});
 	performance.measure(
 		type,
 		"start",
 		"end"
 	);
 	const duration = Math.round(1000 * performance.getEntriesByName(type)[performance.getEntriesByName(type).length - 1].duration) / 1000;
-	console.log(
+	console.info(
 		`${type}: %c${duration} ms`,
 		`color: ${duration > 100 / 6 ? "red" : "green"};`,
 	);
-	self.postMessage({
-		freqMap,
-		size
-	});
 });

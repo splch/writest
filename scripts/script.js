@@ -24,7 +24,6 @@ function searchGram(list) {
 		if (this.readyState == 4 && this.status == 200) {
 			const ngramWorker = new Worker("scripts/worker.js");
 			ngramWorker.addEventListener("message", function (e) {
-				this.terminate();
 				displayArray(e.data.freqMap, "ngram");
 				document.getElementById("ngramTable").style.display = "initial";
 			});
@@ -64,19 +63,7 @@ function read(index, round = true) {
 	let gl;
 	switch (index) {
 		case "avg":
-			performance.mark("start");
 			gl = (2 * read("fk", false) + 1.8 * read("fog", false) + 1.75 * read("smog", false) + 1.25 * read("cl", false) + 1 * read("ari", false)) / (2 + 1.8 + 1.75 + 1.25 + 1);
-			performance.mark("end");
-			performance.measure(
-				"avg",
-				"start",
-				"end"
-			);
-			const duration = Math.round(1000 * performance.getEntriesByName("avg")[0].duration) / 1000;
-			console.log(
-				`average readability: %c${duration} ms`,
-				`color: ${duration > 100 / 6 ? "red" : "green"};`,
-			);
 			break;
 		case "splch":
 			gl = -1.7760706896110616 * (stats.charNum / stats.wordNum) - 0.00010044755744618449 * (stats.wordNum / stats.sentNum) + 1.15 * (stats.sylNum / stats.wordNum) + 12.004162847082352;
@@ -135,7 +122,6 @@ function displayStats() {
 function calculateStats(text, words) {
 	const statsWorker = new Worker("scripts/worker.js");
 	statsWorker.addEventListener("message", function (e) {
-		this.terminate();
 		stats = e.data.freqMap;
 		displayStats();
 	});
@@ -153,13 +139,11 @@ function populate(text, words) {
 	const phraseWorker = new Worker("scripts/worker.js");
 	const windowWorker = new Worker("scripts/worker.js");
 	phraseWorker.addEventListener("message", function (e) {
-		this.terminate();
 		if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
 			displayArray(e.data.freqMap, "phrase");
 		}
 	});
 	windowWorker.addEventListener("message", function (e) {
-		this.terminate();
 		if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
 			displayArray(e.data.freqMap, "window");
 		}
@@ -184,7 +168,6 @@ function calcWords(text) {
 	document.getElementById("text").value = text;
 	const wordsWorker = new Worker("scripts/worker.js");
 	wordsWorker.addEventListener("message", function (e) {
-		this.terminate();
 		words = e.data.freqMap;
 		populate(text, words);
 	});
@@ -277,7 +260,6 @@ document.getElementById("phraseSize").addEventListener("change", () => {
 	if (words) {
 		const phraseWorker = new Worker("scripts/worker.js");
 		phraseWorker.addEventListener("message", function (e) {
-			this.terminate();
 			if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
 				displayArray(e.data.freqMap, "phrase");
 			}
@@ -296,7 +278,6 @@ document.getElementById("windowSize").addEventListener("change", () => {
 	if (words) {
 		const windowWorker = new Worker("scripts/worker.js");
 		windowWorker.addEventListener("message", function (e) {
-			this.terminate();
 			if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
 				displayArray(e.data.freqMap, "window");
 			}

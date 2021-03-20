@@ -1,6 +1,5 @@
 let words, stats;
 const clusterize = { "phrase": null, "window": null, "ngram": null };
-const workers = { "phrase": null, "window": null, "words": null, "stats": null, "ngram": null }
 
 function scrollRefresh(element) {
 	element.style.overflow = "auto";
@@ -23,14 +22,13 @@ function searchGram(list) {
 	xhr.onreadystatechange = function () {
 		// fix empty table bug
 		if (this.readyState == 4 && this.status == 200) {
-			if (!workers.ngram) {
-				workers.ngram = new Worker("scripts/worker.js");
-			}
-			workers.ngram.addEventListener("message", function (e) {
+			const ngramWorker = new Worker("scripts/worker.js");
+			ngramWorker.addEventListener("message", function (e) {
+				this.terminate();
 				displayArray(e.data.freqMap, "ngram");
 				document.getElementById("ngramTable").style.display = "initial";
 			});
-			workers.ngram.postMessage(JSON.stringify(
+			ngramWorker.postMessage(JSON.stringify(
 				{
 					"words": JSON.parse(xhr.responseText),
 					"size": 0,
@@ -135,14 +133,13 @@ function displayStats() {
 }
 
 function calculateStats(text, words) {
-	if (!workers.stats) {
-		workers.stats = new Worker("scripts/worker.js");
-	}
-	workers.stats.addEventListener("message", function (e) {
+	const statsWorker = new Worker("scripts/worker.js");
+	statsWorker.addEventListener("message", function (e) {
+		this.terminate();
 		stats = e.data.freqMap;
 		displayStats();
 	});
-	workers.stats.postMessage(JSON.stringify(
+	statsWorker.postMessage(JSON.stringify(
 		{
 			"words": words,
 			"size": text,
@@ -153,28 +150,28 @@ function calculateStats(text, words) {
 
 function populate(text, words) {
 	calculateStats(text, words);
-	if (!workers.phrase || !workers.window) {
-		workers.phrase = new Worker("scripts/worker.js");
-		workers.window = new Worker("scripts/worker.js");
-	}
-	workers.phrase.addEventListener("message", function (e) {
+	const phraseWorker = new Worker("scripts/worker.js");
+	const windowWorker = new Worker("scripts/worker.js");
+	phraseWorker.addEventListener("message", function (e) {
+		this.terminate();
 		if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
 			displayArray(e.data.freqMap, "phrase");
 		}
 	});
-	workers.window.addEventListener("message", function (e) {
+	windowWorker.addEventListener("message", function (e) {
+		this.terminate();
 		if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
 			displayArray(e.data.freqMap, "window");
 		}
 	});
-	workers.phrase.postMessage(JSON.stringify(
+	phraseWorker.postMessage(JSON.stringify(
 		{
 			"words": words,
 			"size": parseInt(document.getElementById("phraseSize").value),
 			"type": "phrase"
 		}
 	));
-	workers.window.postMessage(JSON.stringify(
+	windowWorker.postMessage(JSON.stringify(
 		{
 			"words": words,
 			"size": parseInt(document.getElementById("windowSize").value),
@@ -185,14 +182,13 @@ function populate(text, words) {
 
 function calcWords(text) {
 	document.getElementById("text").value = text;
-	if (!workers.words) {
-		workers.words = new Worker("scripts/worker.js");
-	}
-	workers.words.addEventListener("message", function (e) {
+	const wordsWorker = new Worker("scripts/worker.js");
+	wordsWorker.addEventListener("message", function (e) {
+		this.terminate();
 		words = e.data.freqMap;
 		populate(text, words);
 	});
-	workers.words.postMessage(JSON.stringify(
+	wordsWorker.postMessage(JSON.stringify(
 		{
 			"words": text,
 			"size": 0,
@@ -279,15 +275,14 @@ document.getElementById("ngramQuery").addEventListener("change", () => {
 
 document.getElementById("phraseSize").addEventListener("change", () => {
 	if (words) {
-		if (!workers.phrase) {
-			workers.phrase = new Worker("scripts/worker.js");
-		}
-		workers.phrase.addEventListener("message", function (e) {
+		const phraseWorker = new Worker("scripts/worker.js");
+		phraseWorker.addEventListener("message", function (e) {
+			this.terminate();
 			if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
 				displayArray(e.data.freqMap, "phrase");
 			}
 		});
-		workers.phrase.postMessage(JSON.stringify(
+		phraseWorker.postMessage(JSON.stringify(
 			{
 				"words": words,
 				"size": parseInt(document.getElementById("phraseSize").value),
@@ -299,15 +294,14 @@ document.getElementById("phraseSize").addEventListener("change", () => {
 
 document.getElementById("windowSize").addEventListener("change", () => {
 	if (words) {
-		if (!workers.window) {
-			workers.window = new Worker("scripts/worker.js");
-		}
-		workers.window.addEventListener("message", function (e) {
+		const windowWorker = new Worker("scripts/worker.js");
+		windowWorker.addEventListener("message", function (e) {
+			this.terminate();
 			if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
 				displayArray(e.data.freqMap, "window");
 			}
 		});
-		workers.window.postMessage(JSON.stringify(
+		windowWorker.postMessage(JSON.stringify(
 			{
 				"words": words,
 				"size": parseInt(document.getElementById("windowSize").value),

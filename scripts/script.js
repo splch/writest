@@ -10,8 +10,7 @@ function scrollRefresh(element) {
 
 function searchGram(list) {
 	let query = "";
-	const length = list.length;
-	for (let i = 0; i < length; i++) {
+	for (let i = 0, length = list.length; i < length; i++) {
 		query += list[i].replaceAll(" ", "+") + "%2C";
 	}
 	const xhr = new XMLHttpRequest();
@@ -23,7 +22,7 @@ function searchGram(list) {
 		// fix empty table bug
 		if (this.readyState == 4 && this.status == 200) {
 			const ngramWorker = new Worker("scripts/worker.js");
-			ngramWorker.addEventListener("message", function (e) {
+			ngramWorker.addEventListener("message", e => {
 				displayArray(e.data.freqMap, "ngram");
 				document.getElementById("ngramTable").style.display = "initial";
 			});
@@ -92,7 +91,7 @@ function read(index, round = true) {
 	}
 	if (round) {
 		gl = Math.round(10 * gl) / 10;
-		document.getElementById("read").parentNode.style.background = gl > 6 && gl < 9 ? "#00cc0066" : "#ff000066";
+		document.getElementById("read").parentElement.style.background = gl > 6 && gl < 9 ? "#00cc0066" : "#ff000066";
 	}
 	return gl;
 }
@@ -113,15 +112,15 @@ function displayStats() {
 	document.getElementById("lexDen").innerText = lexDen.toLocaleString("en-US", {
 		style: "percent"
 	});
-	document.getElementById("avgWord").parentNode.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
-	document.getElementById("avgChar").parentNode.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
-	document.getElementById("lexDen").parentNode.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00cc0066" : "#ff000066";
+	document.getElementById("avgWord").parentElement.style.background = avgWord > 14 && avgWord < 21 ? "#00cc0066" : "#ff000066";
+	document.getElementById("avgChar").parentElement.style.background = avgChar > 4 && avgChar < 6 ? "#00cc0066" : "#ff000066";
+	document.getElementById("lexDen").parentElement.style.background = lexDen > 0.4 && lexDen < 0.6 ? "#00cc0066" : "#ff000066";
 	document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
 }
 
 function calculateStats(text, words) {
 	const statsWorker = new Worker("scripts/worker.js");
-	statsWorker.addEventListener("message", function (e) {
+	statsWorker.addEventListener("message", e => {
 		stats = e.data.freqMap;
 		displayStats();
 	});
@@ -138,12 +137,12 @@ function populate(text, words) {
 	calculateStats(text, words);
 	const phraseWorker = new Worker("scripts/worker.js");
 	const windowWorker = new Worker("scripts/worker.js");
-	phraseWorker.addEventListener("message", function (e) {
+	phraseWorker.addEventListener("message", e => {
 		if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
 			displayArray(e.data.freqMap, "phrase");
 		}
 	});
-	windowWorker.addEventListener("message", function (e) {
+	windowWorker.addEventListener("message", e => {
 		if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
 			displayArray(e.data.freqMap, "window");
 		}
@@ -167,7 +166,7 @@ function populate(text, words) {
 function calcWords(text) {
 	document.getElementById("text").value = text;
 	const wordsWorker = new Worker("scripts/worker.js");
-	wordsWorker.addEventListener("message", function (e) {
+	wordsWorker.addEventListener("message", e => {
 		words = e.data.freqMap;
 		populate(text, words);
 	});
@@ -190,25 +189,29 @@ function getText() {
 		if (document.location.hostname == "docs.google.com") {
 			url += document.location.href.split(/d\//)[1].split("/")[0];
 		}
+		let failText = "Text request failed.\n\nThese tips may help:\n\t1. Make sure your main Google account is accessing the document.\n\t2. Copy your text in here, and click outside of the textarea.\n\t3. Reload the extension and try again.";
 		const xhr = new XMLHttpRequest();
 		xhr.open("GET", url);
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
+				if (xhr.responseText) {
+					failText = xhr.responseText;
+				}
 				chrome.runtime.sendMessage(
-					{ "text": xhr.responseText }
+					{ "text": failText }
 				);
 			}
 		};
 		xhr.timeout = 5e3;
 		xhr.ontimeout = function () {
 			chrome.runtime.sendMessage(
-				"Text request failed.\n\nThese tips may help:\n\t1. Make sure your main Google account is accessing the document.\n\t2. Copy your text in here, and click outside of the textarea.\n\t3. Reload the extension and try again."
+				failText
 			);
 		}
 		xhr.send();
 	}
 	else {
-		setTimeout(function () {
+		setTimeout(() => {
 			chrome.runtime.sendMessage(
 				{ "text": document.body.innerText }
 			);
@@ -235,19 +238,19 @@ function callText() {
 	}
 }
 
-document.getElementById("text").addEventListener("keyup", () => {
-	document.getElementById("text").custom = true;
+document.getElementById("text").addEventListener("keyup", e => {
+	e.target.custom = true;
 	callText();
 });
 
-document.getElementById("selectIndex").addEventListener("change", () => {
+document.getElementById("selectIndex").addEventListener("change", e => {
 	if (words) {
-		document.getElementById("read").innerText = read(document.getElementById("selectIndex").value);
+		document.getElementById("read").innerText = read(e.target.value);
 	}
 });
 
-document.getElementById("ngramQuery").addEventListener("change", () => {
-	const data = document.getElementById("ngramQuery").value.replaceAll(/,{2,}/g, ",");
+document.getElementById("ngramQuery").addEventListener("change", e => {
+	const data = e.target.value.replaceAll(/,{2,}/g, ",");
 	if (data) {
 		searchGram(data.split(/\s*,\s*/));
 	}
@@ -256,36 +259,36 @@ document.getElementById("ngramQuery").addEventListener("change", () => {
 	}
 });
 
-document.getElementById("phraseSize").addEventListener("change", () => {
+document.getElementById("phraseSize").addEventListener("change", e => {
 	if (words) {
 		const phraseWorker = new Worker("scripts/worker.js");
-		phraseWorker.addEventListener("message", function (e) {
-			if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
-				displayArray(e.data.freqMap, "phrase");
+		phraseWorker.addEventListener("message", rsp => {
+			if (rsp.data.size == parseInt(e.target.value)) {
+				displayArray(rsp.data.freqMap, "phrase");
 			}
 		});
 		phraseWorker.postMessage(JSON.stringify(
 			{
 				"words": words,
-				"size": parseInt(document.getElementById("phraseSize").value),
+				"size": parseInt(e.target.value),
 				"type": "phrase"
 			}
 		));
 	}
 });
 
-document.getElementById("windowSize").addEventListener("change", () => {
+document.getElementById("windowSize").addEventListener("change", e => {
 	if (words) {
 		const windowWorker = new Worker("scripts/worker.js");
-		windowWorker.addEventListener("message", function (e) {
-			if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
-				displayArray(e.data.freqMap, "window");
+		windowWorker.addEventListener("message", rsp => {
+			if (rsp.data.size == parseInt(e.target.value)) {
+				displayArray(rsp.data.freqMap, "window");
 			}
 		});
 		windowWorker.postMessage(JSON.stringify(
 			{
 				"words": words,
-				"size": parseInt(document.getElementById("windowSize").value),
+				"size": parseInt(e.target.value),
 				"type": "window"
 			}
 		));
@@ -293,8 +296,8 @@ document.getElementById("windowSize").addEventListener("change", () => {
 });
 
 document.querySelectorAll("details").forEach(details => {
-	details.addEventListener("toggle", event => {
-		event.target.scrollIntoView();
+	details.addEventListener("toggle", e => {
+		e.target.scrollIntoView();
 		scrollRefresh(document.getElementsByTagName("html")[0]); // remove if chrome fixes bug
 	});
 });

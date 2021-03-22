@@ -211,7 +211,7 @@ function getText() {
 		xhr.send();
 	}
 	else {
-		setTimeout(() => {
+		setTimeout(_ => {
 			chrome.runtime.sendMessage(
 				{ "text": document.body.innerText }
 			);
@@ -228,7 +228,7 @@ function callText() {
 			chrome.scripting.executeScript({
 				target: { tabId: tab[0].id },
 				function: getText,
-			}, () => {
+			}, _ => {
 				chrome.runtime.onMessage.addListener(function listener(result) {
 					chrome.runtime.onMessage.removeListener(listener);
 					calcWords(result.text);

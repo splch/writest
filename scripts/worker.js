@@ -91,12 +91,13 @@ function windowSort(words, size) {
 	for (let i = size, loops = words.length + 1; i < loops; i += size - 1) {
 		const windowMap = {};
 		let j = size;
-		while (j--) {
+		do {
 			if (!windowMap[words[i - j]]) {
 				windowMap[words[i - j]] = 0;
 			}
 			windowMap[words[i - j]]++;
 		}
+		while (--j);
 		for (let key in windowMap) {
 			if (windowMap[key] > 1) {
 				if (!freqMap[key]) {
@@ -113,10 +114,11 @@ function phraseSort(words, size) {
 	const freqMap = {};
 	for (let i = size, loops = words.length + 1; i < loops; i++) {
 		let phrase = "";
-		let j = size
-		while (j--) {
+		let j = size;
+		do {
 			phrase += words[i - j] + " ";
 		}
+		while (--j);
 		phrase = phrase.slice(0, -1);
 		if (!freqMap[phrase]) {
 			freqMap[phrase] = 0;

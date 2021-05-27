@@ -205,7 +205,7 @@ function getText() {
 		xhr.timeout = 5e3;
 		xhr.ontimeout = function () {
 			chrome.runtime.sendMessage(
-				failText
+				{ "text": failText }
 			);
 		}
 		xhr.send();
@@ -224,9 +224,9 @@ function callText() {
 		calcWords(document.getElementById("text").value);
 	}
 	else {
-		chrome.tabs.query({ active: true, currentWindow: true }).then(tab => {
+		chrome.tabs.query({ active: true, currentWindow: true }).then(tabs => {
 			chrome.scripting.executeScript({
-				target: { tabId: tab[0].id },
+				target: { tabId: tabs[0].id },
 				function: getText,
 			}, _ => {
 				chrome.runtime.onMessage.addListener(function listener(result) {
@@ -302,4 +302,4 @@ document.querySelectorAll("details").forEach(details => {
 	});
 });
 
-callText();
+window.onload = callText;

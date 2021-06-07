@@ -65,7 +65,8 @@ function read(index, round = true) {
 			gl = (2 * read("fk", false) + 1.8 * read("fog", false) + 1.75 * read("smog", false) + 1.25 * read("cl", false) + 1 * read("ari", false)) / (2 + 1.8 + 1.75 + 1.25 + 1);
 			break;
 		case "splch":
-			gl = -1.7760706896110616 * (stats.charNum / stats.wordNum) - 0.00010044755744618449 * (stats.wordNum / stats.sentNum) + 1.15 * (stats.sylNum / stats.wordNum) + 12.004162847082352;
+			// https://docs.google.com/spreadsheets/d/1MQu1xfeYM6PQF5Gp_X-aovgALh2VewWLelFdZsr9cGY/preview
+			gl = 11.6558 - 5.80721 / (6.99462 * 10 ** -37 * (stats.charNum / stats.wordNum) ** 58.1708 + 1) - 4.57508 / (3.81522 * 10 ** -10 * (stats.sylNum / stats.wordNum) ** 97.8065 + 1);
 			break;
 		case "fk":
 			gl = 0.39 * (stats.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;

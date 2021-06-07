@@ -1,226 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="Description" content="Writest Chrome Extension" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Writest</title>
+    <style>
+      html {
+        width: 300px;
+        background: repeating-linear-gradient(33.2deg, #ffffff, #cccccc 1px);
+      }
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="Description" content="Writest Chrome Extension" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Writest</title>
-	<style>
-		html {
-			width: 300px;
-			background: repeating-linear-gradient(33.2deg, #ffffff, #cccccc 1px);
-		}
+      body {
+        background: #ffffff;
+      }
 
-		body {
-			background: #ffffff;
-		}
+      h2 {
+        margin: 0px;
+        text-align: center;
+      }
 
-		h2 {
-			margin: 0px;
-			text-align: center;
-		}
+      textarea {
+        height: 129px;
+        width: 271px;
+        resize: vertical;
+        content-visibility: auto;
+      }
 
-		textarea {
-			height: 129px;
-			width: 271px;
-			resize: vertical;
-			content-visibility: auto;
-		}
+      h2,
+      summary,
+      small {
+        outline: none;
+        user-select: none;
+      }
 
-		h2,
-		summary,
-		small {
-			outline: none;
-			user-select: none;
-		}
+      #ngramTable {
+        display: none;
+      }
 
-		#ngramTable {
-			display: none;
-		}
+      table,
+      td {
+        padding: 2px;
+        border: 1px solid #000000;
+        table-layout: auto;
+      }
 
-		table,
-		td {
-			padding: 2px;
-			border: 1px solid #000000;
-			table-layout: auto;
-		}
+      tbody tr:hover {
+        background: #ffffcc !important;
+      }
 
-		tbody tr:hover {
-			background: #ffffcc !important;
-		}
+      select {
+        background: transparent;
+        border: none;
+        outline: none;
+      }
 
-		select {
-			background: transparent;
-			border: none;
-			outline: none;
-		}
+      summary:hover {
+        background: #cccccc;
+      }
 
-		summary:hover {
-			background: #cccccc;
-		}
+      .clusterize-scroll {
+        max-height: 234px;
+        width: max-content;
+        overflow: auto;
+      }
 
-		.clusterize-scroll {
-			max-height: 234px;
-			width: max-content;
-			overflow: auto;
-		}
+      .clusterize-table {
+        width: 263px;
+      }
 
-		.clusterize-table {
-			width: 263px;
-		}
+      .clusterize-content {
+        width: 200px;
+        outline: 0px;
+      }
 
-		.clusterize-content {
-			width: 200px;
-			outline: 0px;
-		}
+      #space {
+        visibility: hidden;
+      }
+    </style>
+    <script src="scripts/clusterize.js" async></script>
+    <script src="scripts/script.js" defer></script>
+  </head>
 
-		#space {
-			visibility: hidden;
-		}
-	</style>
-	<script src="scripts/clusterize.js" async></script>
-	<script src="scripts/script.js" defer></script>
-</head>
+  <body>
+    <h2>Writest</h2>
 
-<body>
-	<h2>Writest</h2>
+    <hr />
 
-	<hr />
+    <details>
+      <summary>Text</summary>
+      <textarea id="text"></textarea>
+    </details>
 
-	<details>
-		<summary>Text</summary>
-		<textarea id="text"></textarea>
-	</details>
+    <hr />
 
-	<hr />
+    <details open>
+      <summary>Statistics</summary>
+      <table id="stats">
+        <thead>
+          <tr>
+            <th>Counts</th>
+            <th>Number</th>
+          </tr>
+        </thead>
+        <tr>
+          <td>Characters</td>
+          <td id="charNum" title="excludes spaces"></td>
+        </tr>
+        <tr>
+          <td>Words</td>
+          <td id="wordNum"></td>
+        </tr>
+        <tr>
+          <td>Sentences</td>
+          <td id="sentNum"></td>
+        </tr>
+        <tr>
+          <td>Average words per sentence</td>
+          <td id="avgWord"></td>
+        </tr>
+        <tr>
+          <td>Average characters per word</td>
+          <td id="avgChar"></td>
+        </tr>
+        <thead>
+          <tr>
+            <th>Derived</th>
+            <th>Number</th>
+          </tr>
+        </thead>
+        <tr>
+          <td>
+            <select id="selectIndex">
+              <option value="avg">Average Readability</option>
+              <option value="splch">BETA: Splch Index</option>
+              <option value="fk">Flesch–Kincaid Grade Level</option>
+              <option value="fog">Gunning Fog Index</option>
+              <option value="smog">SMOG Index</option>
+              <option value="cl">Coleman-Liau Index</option>
+              <option value="ari">Automated Readability Index</option>
+              <!-- <option value="lin">Linsear Write</option> -->
+            </select>
+          </td>
+          <td id="read" title="Grade Level"></td>
+        </tr>
+        <tr>
+          <td>Lexical Density</td>
+          <td id="lexDen"></td>
+        </tr>
+      </table>
+    </details>
 
-	<details open>
-		<summary>Statistics</summary>
-		<table id="stats">
-			<thead>
-				<tr>
-					<th>Counts</th>
-					<th>Number</th>
-				</tr>
-			</thead>
-			<tr>
-				<td>Characters</td>
-				<td id="charNum" title="excludes spaces"></td>
-			</tr>
-			<tr>
-				<td>Words</td>
-				<td id="wordNum"></td>
-			</tr>
-			<tr>
-				<td>Sentences</td>
-				<td id="sentNum"></td>
-			</tr>
-			<tr>
-				<td>Average words per sentence</td>
-				<td id="avgWord"></td>
-			</tr>
-			<tr>
-				<td>Average characters per word</td>
-				<td id="avgChar"></td>
-			</tr>
-			<thead>
-				<tr>
-					<th>Derived</th>
-					<th>Number</th>
-				</tr>
-			</thead>
-			<tr>
-				<td>
-					<select id="selectIndex">
-						<option value="avg">Average Readability</option>
-						<!-- <option value="splch">Splch Index</option> -->
-						<option value="fk">Flesch–Kincaid Grade Level</option>
-						<option value="fog">Gunning Fog Index</option>
-						<option value="smog">SMOG Index</option>
-						<option value="cl">Coleman-Liau Index</option>
-						<option value="ari">Automated Readability Index</option>
-						<!-- <option value="lin">Linsear Write</option> -->
-					</select>
-				</td>
-				<td id="read" title="Grade Level"></td>
-			</tr>
-			<tr>
-				<td>Lexical Density</td>
-				<td id="lexDen"></td>
-			</tr>
-		</table>
-	</details>
+    <hr />
 
-	<hr />
+    <details>
+      <summary>Additional features</summary>
 
-	<details>
-		<summary>Additional features</summary>
+      <input
+        id="ngramQuery"
+        type="search"
+        data-tip="Same as Ngram search"
+        placeholder="&#x1f50d;  N-gram Search"
+      />
+      <div id="ngramTable" class="clusterize">
+        <table class="clusterize-table">
+          <thead>
+            <tr>
+              <th>N-gram</th>
+              <th>Frequency</th>
+            </tr>
+          </thead>
+        </table>
+        <div id="ngramScroll" class="clusterize-scroll">
+          <table class="clusterize-table">
+            <tbody id="ngramContent" class="clusterize-content"></tbody>
+          </table>
+        </div>
+      </div>
 
-		<input id="ngramQuery" type="search" data-tip="Same as Ngram search" placeholder="&#x1f50d;  N-gram Search" />
-		<div id="ngramTable" class="clusterize">
-			<table class="clusterize-table">
-				<thead>
-					<tr>
-						<th>N-gram</th>
-						<th>Frequency</th>
-					</tr>
-				</thead>
-			</table>
-			<div id="ngramScroll" class="clusterize-scroll">
-				<table class="clusterize-table">
-					<tbody id="ngramContent" class="clusterize-content"></tbody>
-				</table>
-			</div>
-		</div>
+      <hr />
 
-		<hr />
+      <small>Phrase length: </small>
+      <input id="phraseSize" type="number" min="1" value="1" />
+      <details>
+        <summary>Frequency</summary>
+        <div class="clusterize">
+          <table class="clusterize-table">
+            <thead>
+              <tr>
+                <th>Phrase</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+          </table>
+          <div id="phraseScroll" class="clusterize-scroll">
+            <table class="clusterize-table">
+              <tbody id="phraseContent" class="clusterize-content"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
 
-		<small>Phrase length: </small>
-		<input id="phraseSize" type="number" min="1" value="1" />
-		<details>
-			<summary>Frequency</summary>
-			<div class="clusterize">
-				<table class="clusterize-table">
-					<thead>
-						<tr>
-							<th>Phrase</th>
-							<th>Count</th>
-						</tr>
-					</thead>
-				</table>
-				<div id="phraseScroll" class="clusterize-scroll">
-					<table class="clusterize-table">
-						<tbody id="phraseContent" class="clusterize-content"></tbody>
-					</table>
-				</div>
-			</div>
-		</details>
+      <hr />
 
-		<hr />
-
-		<small>Search window: </small>
-		<input id="windowSize" type="number" min="2" value="3" />
-		<details>
-			<summary>Window</summary>
-			<div class="clusterize">
-				<table class="clusterize-table">
-					<thead>
-						<tr>
-							<th>Word</th>
-							<th>Count</th>
-						</tr>
-					</thead>
-				</table>
-				<div id="windowScroll" class="clusterize-scroll">
-					<table class="clusterize-table">
-						<tbody id="windowContent" class="clusterize-content"></tbody>
-					</table>
-				</div>
-			</div>
-		</details>
-	</details>
-	<hr id="space" />
-</body>
-
+      <small>Search window: </small>
+      <input id="windowSize" type="number" min="2" value="3" />
+      <details>
+        <summary>Window</summary>
+        <div class="clusterize">
+          <table class="clusterize-table">
+            <thead>
+              <tr>
+                <th>Word</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+          </table>
+          <div id="windowScroll" class="clusterize-scroll">
+            <table class="clusterize-table">
+              <tbody id="windowContent" class="clusterize-content"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </details>
+    <hr id="space" />
+  </body>
 </html>

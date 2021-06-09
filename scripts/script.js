@@ -66,10 +66,10 @@ function read(index, round = true) {
 			break;
 		case "splch":
 			// https://docs.google.com/spreadsheets/d/1MQu1xfeYM6PQF5Gp_X-aovgALh2VewWLelFdZsr9cGY/preview
-			gl = 11.6558 - 5.80721 / (6.99462 * 10 ** -37 * (stats.charNum / stats.wordNum) ** 58.1708 + 1) - 4.57508 / (3.81522 * 10 ** -10 * (stats.sylNum / stats.wordNum) ** 97.8065 + 1);
+			gl = (0.32287691 * 12 / (1 + Math.exp(-5.58651761 / 3 * (stats.charNum / stats.wordNum - 4.024863778))) + 0.85042121 * 12 / (1 + Math.exp(-117.58534179 / 3 * (stats.sylNum / stats.wordNum - 1.247387606)))) / 1.17329812;
 			break;
 		case "fk":
-			gl = 0.39 * (stats.wordNum / stats.sentNum) + 11.8 * (stats.sylNum / stats.wordNum) - 15.59;
+			gl = 0.39 * stats.wordNum / stats.sentNum + 11.8 * stats.sylNum / stats.wordNum - 15.59;
 			gl = gl < 0 ? 0 : gl;
 			break;
 		case "fog":

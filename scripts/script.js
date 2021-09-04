@@ -20,7 +20,7 @@ function searchGram(list) {
 	xhr.open("GET", url);
 	xhr.onreadystatechange = function () {
 		// fix empty table bug
-		if (this.readyState == 4 && this.status == 200) {
+		if (this.readyState === 4 && this.status === 200) {
 			const ngramWorker = new Worker("scripts/worker.js");
 			ngramWorker.addEventListener("message", e => {
 				displayArray(e.data.freqMap, "ngram");
@@ -139,12 +139,12 @@ function populate(text, words) {
 	const phraseWorker = new Worker("scripts/worker.js");
 	const windowWorker = new Worker("scripts/worker.js");
 	phraseWorker.addEventListener("message", e => {
-		if (e.data.size == parseInt(document.getElementById("phraseSize").value)) {
+		if (e.data.size === parseInt(document.getElementById("phraseSize").value)) {
 			displayArray(e.data.freqMap, "phrase");
 		}
 	});
 	windowWorker.addEventListener("message", e => {
-		if (e.data.size == parseInt(document.getElementById("windowSize").value)) {
+		if (e.data.size === parseInt(document.getElementById("windowSize").value)) {
 			displayArray(e.data.freqMap, "window");
 		}
 	});
@@ -183,18 +183,22 @@ function calcWords(text) {
 function getText() {
 	const hostCodes = {
 		"docs.google.com": "https://docs.google.com/document/export?format=txt&id=",
+		"slc.is": "https://slc.is/",
 		// https://writer.zoho.com/writer/jsp/export.jsp?FORMAT=txt&ACTION=export&options=%7B%22include_changes%22%3A%22all%22%2C%22include_comments%22%3A%22none%22%7D&rid=
 	};
 	let url = hostCodes[document.location.hostname];
 	if (url) {
-		if (document.location.hostname == "docs.google.com") {
+		if (document.location.hostname === "docs.google.com") {
 			url += document.location.href.split(/d\//)[1].split("/")[0];
+		}
+		else if (document.location.hostname === "slc.is") {
+			url += "api/markdown?query=" + document.location.href.split("/#")[1];
 		}
 		let failText = "Text request failed.\n\nThese tips may help:\n\t1. Make sure your main Google account is accessing the document.\n\t2. Copy your text in here, and click outside of the textarea.\n\t3. Reload the extension and try again.";
 		const xhr = new XMLHttpRequest();
 		xhr.open("GET", url);
 		xhr.onreadystatechange = function () {
-			if (this.readyState == 4 && this.status == 200) {
+			if (this.readyState === 4 && this.status === 200) {
 				if (xhr.responseText) {
 					failText = xhr.responseText;
 				}
@@ -264,7 +268,7 @@ document.getElementById("phraseSize").addEventListener("change", e => {
 	if (words) {
 		const phraseWorker = new Worker("scripts/worker.js");
 		phraseWorker.addEventListener("message", rsp => {
-			if (rsp.data.size == parseInt(e.target.value)) {
+			if (rsp.data.size === parseInt(e.target.value)) {
 				displayArray(rsp.data.freqMap, "phrase");
 			}
 		});
@@ -282,7 +286,7 @@ document.getElementById("windowSize").addEventListener("change", e => {
 	if (words) {
 		const windowWorker = new Worker("scripts/worker.js");
 		windowWorker.addEventListener("message", rsp => {
-			if (rsp.data.size == parseInt(e.target.value)) {
+			if (rsp.data.size === parseInt(e.target.value)) {
 				displayArray(rsp.data.freqMap, "window");
 			}
 		});

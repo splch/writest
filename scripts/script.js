@@ -49,11 +49,11 @@ function displayArray(array, id) {
 			scrollId: id + "Scroll",
 			contentId: id + "Content",
 			show_no_data_row: false,
-			callbacks: {
-				scrollingProgress: function () {
-					clusterize[id].refresh();
-				}
-			}
+			// callbacks: {
+			// 	scrollingProgress: function () {
+			// 		clusterize[id].refresh();
+			// 	}
+			// }
 		});
 	}
 }
